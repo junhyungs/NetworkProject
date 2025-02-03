@@ -11,27 +11,78 @@ public class TEST_DBManager : MonoBehaviour
 
     private void Start()
     {
-        if (!TestDBConnection())
+        var dbManager = DataBaseManager.Instance;
+
+        if(dbManager == null)
         {
             return;
         }
 
-        string selectQuery = "SELECT * FROM test_table";
-
-        var dataSet = OnSelectRequest(selectQuery, "test_table");
-
-        if(dataSet != null)
+        RequestDBMessage requestDBMessage = new RequestDBMessage()
         {
-            var message = FormatedTable(dataSet);
+            _userId = "jjjj",
+            _userPassword = "pppp"
+        };
 
-            Debug.Log(message);
+        var receiveDBMessage = dbManager.DuplicateCheck(requestDBMessage);
+
+        if(receiveDBMessage._code == 1)
+        {
+            Debug.Log("Áßº¹°Ë»ç¿Ï·á");
+        }
+        else if(receiveDBMessage._code == 6)
+        {
+            Debug.Log("Áßº¹°Ë»ç½ÇÆÐ");
+        }
+        else if(receiveDBMessage._code == 7)
+        {
+            Debug.Log("Áßº¹");
         }
 
-        string insertQuery = "INSERT INTO test_database.test_table(`product_name`, `cost`, `make_date`, `company`, `amount`) VALUES ('»çÅÁ', 10000, '2022-08-09', 'ºòºò', 10);";
+        receiveDBMessage = dbManager.INSERT_ID(requestDBMessage);
 
-        var isInsert = OnInsertRequest(insertQuery);
+        if(receiveDBMessage._code == 1)
+        {
+            Debug.Log("¼º°ø");
+        }
+        else if(receiveDBMessage._code == 4)
+        {
+            Debug.Log("½ÇÆÐ");
+            Debug.Log(receiveDBMessage._message);
+        }
 
-        Debug.Log(isInsert);
+        if(dbManager.UpdateNickName(requestDBMessage._userId, "ASDF"))
+        {
+            Debug.Log("¼º°ø");
+        }
+        else
+        {
+            Debug.Log("½ÇÆÐ");
+        }
+        
+
+
+        //if (!TestDBConnection())
+        //{
+        //    return;
+        //}
+
+        //string selectQuery = "SELECT * FROM test_table";
+
+        //var dataSet = OnSelectRequest(selectQuery, "test_table");
+
+        //if(dataSet != null)
+        //{
+        //    var message = FormatedTable(dataSet);
+
+        //    Debug.Log(message);
+        //}
+
+        //string insertQuery = "INSERT INTO test_database.test_table(`product_name`, `cost`, `make_date`, `company`, `amount`) VALUES ('»çÅÁ', 10000, '2022-08-09', 'ºòºò', 10);";
+
+        //var isInsert = OnInsertRequest(insertQuery);
+
+        //Debug.Log(isInsert);
     }
     //INSERT INTO `test_database`.`test_table` (`product_name`, `cost`, `make_date`, `company`, `amount`) VALUES ('±è¹ä', '1000', '2022-03-03', '±è¹äÃµ±¹', '10');
     private bool TestDBConnection()
