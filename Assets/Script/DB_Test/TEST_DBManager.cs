@@ -27,7 +27,7 @@ public class TEST_DBManager : MonoBehaviour
             Debug.Log(message);
         }
 
-        string insertQuery = "INSERT INTO test_database.test_table(`product_name`, `cost`, `make_date`, `company`, `amount`) VALUES ('ƒ°≈≤', 10000, '2022-08-09', '±≥√Ã', 10);";
+        string insertQuery = "INSERT INTO test_database.test_table(`product_name`, `cost`, `make_date`, `company`, `amount`) VALUES ('ªÁ≈¡', 10000, '2022-08-09', '∫Ú∫Ú', 10);";
 
         var isInsert = OnInsertRequest(insertQuery);
 
