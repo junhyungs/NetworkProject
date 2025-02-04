@@ -4,30 +4,6 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 
-public enum DB_MessageCode
-{
-    Success = 1,
-    LoginSuccess,
-    LoginFail,
-    INSERT_Fall,
-    ConnectionFail,
-    Fail,
-    Duplicate
-}
-
-public struct RequestDBMessage
-{
-    public NetworkConnection _connection;
-    public string _userId;
-    public string _userPassword;
-}
-
-public struct ReceiveDBMessage
-{
-    public byte _code;
-    public string _message;
-}
-
 /// <summary>
 /// Server
 /// </summary>
@@ -49,8 +25,6 @@ public class DataBaseManager
         }
     }
 
-    private static Dictionary<NetworkConnection, string> _userDictionary = new Dictionary<NetworkConnection, string>();
-
     private const string _dataBaseQuery = "Server=localhost;Port=3306;Database=game_database;Uid=root;Pwd=tlawnsgud~159357";
 
     private const string _checkId = "SELECT COUNT(*) FROM game_database.player_information WHERE player_id = @player_id;";
@@ -65,46 +39,54 @@ public class DataBaseManager
 
     private const string _parameter_nickName = "@player_nickname";
 
+    [Server]
+    public ReceiveDBMessage ConnectionDataBase()
+    {
+        try
+        {
+            if (_connection == null)
+            {
+                using (MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
+                {
+                    _connection = connection;
+
+                    connection.Open();
+                }
+            }
+
+            return CreateReceiveMessage(DB_MessageCode.ConnectionSuccess);
+        }
+        catch (Exception ex)
+        {
+            Debug.Log(ex.Message);
+            return CreateReceiveMessage(DB_MessageCode.ConnectionFail);
+        }
+    }
 
     [Server]
     public ReceiveDBMessage Login(RequestDBMessage message)
     {
-        if (!ConnectionDataBase())
-        {
-            return CreateReceiveMessage(DB_MessageCode.ConnectionFail);
-        }
-
         return LoginCheck(message);
     }
 
     [Server]
     public ReceiveDBMessage DuplicateCheck(RequestDBMessage message)
     {
-        if (!ConnectionDataBase())
-        {
-            return CreateReceiveMessage(DB_MessageCode.ConnectionFail);
-        }
-
         return Duplicate(message);
     }
 
     [Server]
     public ReceiveDBMessage INSERT_ID(RequestDBMessage message)
     {
-        if (!ConnectionDataBase())
-        {
-            return CreateReceiveMessage(DB_MessageCode.ConnectionFail);
-        }
-
         return OnInsertRequest(message);
     }
 
     [Server]
     public bool UpdateNickName(NetworkConnection connection, string nickName)
     {
-        var userid = _userDictionary[connection];
-
         string query = $"UPDATE game_database.player_information SET `player_nickname` = {_parameter_nickName} WHERE `player_id` = {_parameter_id};";
+
+        var userid = (string)connection.authenticationData;
 
         try
         {
@@ -125,15 +107,6 @@ public class DataBaseManager
         {
             Debug.Log(ex.Message);
             return false;
-        }
-    }
-
-    [Server]
-    public void RemoveConnectUser(NetworkConnection connection)
-    {
-        if (_userDictionary.ContainsKey(connection))
-        {
-            _userDictionary.Remove(connection);
         }
     }
 
@@ -171,18 +144,9 @@ public class DataBaseManager
                 _connection.Open();
 
                 mySqlCommand.ExecuteNonQuery();
-            }
+            }      
 
-            var key = message._connection;
-
-            var value = message._userId;
-
-            if (key != null && !_userDictionary.ContainsKey(key))
-            {
-                _userDictionary.Add(key, value);
-            }
-
-            return CreateReceiveMessage(DB_MessageCode.Success);
+            return CreateReceiveMessage(DB_MessageCode.INSERT_Success);
         }
         catch(Exception ex)
         {
@@ -200,39 +164,14 @@ public class DataBaseManager
         {
             if (CheckUserID(message))
             {
-                return CreateReceiveMessage(DB_MessageCode.Duplicate);
+                return CreateReceiveMessage(DB_MessageCode.DuplicateFall);
             }
 
-            return CreateReceiveMessage(DB_MessageCode.Success);
+            return CreateReceiveMessage(DB_MessageCode.DuplicateSuccess);
         }
         catch (Exception ex)
         {
             return CreateReceiveMessage(DB_MessageCode.Fail, ex.Message);
-        }
-    }
-
-    
-
-    private bool ConnectionDataBase()
-    {
-        try
-        {
-            if (_connection == null)
-            {
-                using (MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
-                {
-                    _connection = connection;
-
-                    connection.Open();
-                }
-            }
-
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.Message);
-            return false;
         }
     }
 
@@ -292,7 +231,7 @@ public class DataBaseManager
     {
         ReceiveDBMessage receiveDBMessage = new ReceiveDBMessage()
         {
-            _code = (byte)dB_MessageCode,
+            _code = dB_MessageCode,
             _message = message
         };
 

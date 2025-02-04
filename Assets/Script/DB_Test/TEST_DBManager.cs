@@ -11,54 +11,54 @@ public class TEST_DBManager : MonoBehaviour
 
     private void Start()
     {
-        var dbManager = DataBaseManager.Instance;
+        //var dbManager = DataBaseManager.Instance;
 
-        if(dbManager == null)
-        {
-            return;
-        }
+        //if(dbManager == null)
+        //{
+        //    return;
+        //}
 
-        RequestDBMessage requestDBMessage = new RequestDBMessage()
-        {
-            _userId = "jjjj",
-            _userPassword = "pppp"
-        };
+        //RequestDBMessage requestDBMessage = new RequestDBMessage()
+        //{
+        //    _userId = "jjjj",
+        //    _userPassword = "pppp"
+        //};
 
-        var receiveDBMessage = dbManager.DuplicateCheck(requestDBMessage);
+        //var receiveDBMessage = dbManager.DuplicateCheck(requestDBMessage);
 
-        if(receiveDBMessage._code == 1)
-        {
-            Debug.Log("중복검사완료");
-        }
-        else if(receiveDBMessage._code == 6)
-        {
-            Debug.Log("중복검사실패");
-        }
-        else if(receiveDBMessage._code == 7)
-        {
-            Debug.Log("중복");
-        }
+        //if(receiveDBMessage._code == 1)
+        //{
+        //    Debug.Log("중복검사완료");
+        //}
+        //else if(receiveDBMessage._code == 6)
+        //{
+        //    Debug.Log("중복검사실패");
+        //}
+        //else if(receiveDBMessage._code == 7)
+        //{
+        //    Debug.Log("중복");
+        //}
 
-        receiveDBMessage = dbManager.INSERT_ID(requestDBMessage);
+        //receiveDBMessage = dbManager.INSERT_ID(requestDBMessage);
 
-        if(receiveDBMessage._code == 1)
-        {
-            Debug.Log("성공");
-        }
-        else if(receiveDBMessage._code == 4)
-        {
-            Debug.Log("실패");
-            Debug.Log(receiveDBMessage._message);
-        }
+        //if(receiveDBMessage._code == 1)
+        //{
+        //    Debug.Log("성공");
+        //}
+        //else if(receiveDBMessage._code == 4)
+        //{
+        //    Debug.Log("실패");
+        //    Debug.Log(receiveDBMessage._message);
+        //}
 
-        if(dbManager.UpdateNickName(requestDBMessage._userId, "ASDF"))
-        {
-            Debug.Log("성공");
-        }
-        else
-        {
-            Debug.Log("실패");
-        }
+        //if(dbManager.UpdateNickName(requestDBMessage._userId, "ASDF"))
+        //{
+        //    Debug.Log("성공");
+        //}
+        //else
+        //{
+        //    Debug.Log("실패");
+        //}
         
 
 
