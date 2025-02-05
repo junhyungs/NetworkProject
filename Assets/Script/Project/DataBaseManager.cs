@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using Mirror;
 
-/// <summary>
-/// Server
-/// </summary>
 public class DataBaseManager
 {
     private static MySqlConnection _connection;
@@ -39,7 +36,6 @@ public class DataBaseManager
 
     private const string _parameter_nickName = "@player_nickname";
 
-    [Server]
     public ReceiveDBMessage ConnectionDataBase()
     {
         try
@@ -63,19 +59,19 @@ public class DataBaseManager
         }
     }
 
-    [Server]
+   
     public ReceiveDBMessage Login(RequestDBMessage message)
     {
         return LoginCheck(message);
     }
 
-    [Server]
+    
     public ReceiveDBMessage DuplicateCheck(RequestDBMessage message)
     {
         return Duplicate(message);
     }
 
-    [Server]
+  
     public ReceiveDBMessage INSERT_ID(RequestDBMessage message)
     {
         return OnInsertRequest(message);
@@ -177,16 +173,19 @@ public class DataBaseManager
 
     private bool CheckUserPassword(RequestDBMessage message)
     {
+        
         try
         {
             using (MySqlCommand mySqlCommand = new MySqlCommand(_checkPassword, _connection))
             {
+                
+                mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
                 mySqlCommand.Parameters.AddWithValue(_parameter_password, message._userPassword);
 
                 _connection.Open();
-
+        
                 int result = Convert.ToInt32(mySqlCommand.ExecuteScalar());
-
+        
                 return result > 0;
             }
         }

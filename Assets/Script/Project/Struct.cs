@@ -2,7 +2,6 @@ using Mirror;
 
 public struct RequestDBMessage
 {
-    public NetworkConnection _connection;
     public string _userId;
     public string _userPassword;
 }
@@ -15,8 +14,8 @@ public struct ReceiveDBMessage
 
 public struct RequestAuthenticatorMessage : NetworkMessage
 {
-    public string _userId;
-    public string _userPassword;
+    public AuthenticatorCode _authenticatorCode;
+    public string _nickName;
 }
 
 public struct ReceiveAuthenticatorMessage : NetworkMessage
@@ -25,25 +24,13 @@ public struct ReceiveAuthenticatorMessage : NetworkMessage
     public string _message;
 }
 
-public struct RequestSignUpMessage : NetworkMessage
-{
-    public string _userId;
-    public string _userPassword;
-}
-
-public struct ReceiveSignUpMessage : NetworkMessage
+public struct ReceiveSignUpMessage
 {
     public AuthenticatorCode _code;
     public string _message;
 }
 
-public struct RequestDuplicateMessage : NetworkMessage
-{
-    public string _userId;
-    public string _userPassword;
-}
-
-public struct ReceiveDuplicateMessage : NetworkMessage
+public struct ReceiveDuplicateMessage
 {
     public AuthenticatorCode _code;
     public string _message;

@@ -25,17 +25,5 @@ public class Project_RoomManager : NetworkRoomManager
         }
     }
 
-    public ProjectAuthenticator ProjectAuthenticator { get; set; }
-
-    public override void Awake()
-    {
-        base.Awake();
-
-        ProjectAuthenticator = GetComponent<ProjectAuthenticator>();
-    }
-
-    public void StopHostNetwork()
-    {
-        singleton.StopHost();
-    }
+    
 }
