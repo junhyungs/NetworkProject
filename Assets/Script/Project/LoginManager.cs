@@ -1,7 +1,5 @@
 using UnityEngine;
 using System;
-using System.Runtime.CompilerServices;
-
 public class LoginManager
 {
     private static LoginManager instance;
@@ -164,4 +162,10 @@ public class PlayerInformation
 {
     public static AuthenticatorCode AuthenticatorCode;
     public static string NickName;
+}
+
+public class Data
+{
+    public string ID { get; set; }
+    public string NickName { get; set; }
 }

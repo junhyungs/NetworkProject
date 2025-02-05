@@ -77,34 +77,32 @@ public class DataBaseManager
         return OnInsertRequest(message);
     }
 
-    [Server]
-    public bool UpdateNickName(NetworkConnection connection, string nickName)
-    {
-        string query = $"UPDATE game_database.player_information SET `player_nickname` = {_parameter_nickName} WHERE `player_id` = {_parameter_id};";
+    //[Server]
+    //public void UpdateNickName(NetworkConnection connection, string nickName)
+    //{
+    //    string query = $"UPDATE game_database.player_information SET `player_nickname` = {_parameter_nickName} WHERE `player_id` = {_parameter_id};";
 
-        var userid = (string)connection.authenticationData;
+    //    var nickName = (string)connection.authenticationData;
 
-        try
-        {
-            using (MySqlCommand mySqlCommand = new MySqlCommand(query, _connection))
-            {
-                mySqlCommand.Parameters.AddWithValue(_parameter_nickName, nickName);
+    //    try
+    //    {
+    //        using (MySqlCommand mySqlCommand = new MySqlCommand(query, _connection))
+    //        {
+    //            mySqlCommand.Parameters.AddWithValue(_parameter_nickName, nickName);
 
-                mySqlCommand.Parameters.AddWithValue(_parameter_id, userid);
+    //            mySqlCommand.Parameters.AddWithValue(_parameter_id, userid);
 
-                _connection.Open();
+    //            _connection.Open();
 
-                mySqlCommand.ExecuteNonQuery();
-            }
+    //            mySqlCommand.ExecuteNonQuery();
+    //        }
 
-            return true;
-        }
-        catch (Exception ex)
-        {
-            Debug.Log(ex.Message);
-            return false;
-        }
-    }
+    //    }
+    //    catch (Exception ex)
+    //    {
+    //        Debug.Log(ex.Message);
+    //    }
+    //}
 
     private ReceiveDBMessage LoginCheck(RequestDBMessage message)
     {
