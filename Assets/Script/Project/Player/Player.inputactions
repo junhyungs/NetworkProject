@@ -18,7 +18,7 @@
                     "name": "Mouse",
                     "type": "Value",
                     "id": "934031e1-792c-44b6-a0fa-a67d5b4269d7",
-                    "expectedControlType": "Delta",
+                    "expectedControlType": "Axis",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": true
@@ -36,6 +36,24 @@
                     "name": "Reload",
                     "type": "Button",
                     "id": "ee4f1875-2319-43a1-b4fd-b3b7b65860fb",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Sprint",
+                    "type": "Button",
+                    "id": "b1c5585e-6f73-48a1-8fbc-673b27520b6f",
+                    "expectedControlType": "",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
+                },
+                {
+                    "name": "Zoom",
+                    "type": "Button",
+                    "id": "de811a77-a29f-4272-bc2a-c2a829feaeec",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -101,7 +119,7 @@
                 {
                     "name": "",
                     "id": "88a55836-c56d-4de2-9864-c18fd67a4675",
-                    "path": "<Mouse>/delta",
+                    "path": "<Mouse>/delta/x",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -113,7 +131,7 @@
                     "name": "",
                     "id": "2295aef2-9913-4f67-90c4-0367ba0e2133",
                     "path": "<Mouse>/leftButton",
-                    "interactions": "",
+                    "interactions": "Press(pressPoint=0.2,behavior=2)",
                     "processors": "",
                     "groups": "",
                     "action": "Attack",
@@ -124,10 +142,32 @@
                     "name": "",
                     "id": "372395fd-a4cb-4f3f-84bb-3e40f8d05d68",
                     "path": "<Keyboard>/#(R)",
-                    "interactions": "",
+                    "interactions": "Press",
                     "processors": "",
                     "groups": "",
                     "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "b904e616-70a7-4ed2-ad41-5393851ee4da",
+                    "path": "<Keyboard>/leftShift",
+                    "interactions": "Press(pressPoint=0.2,behavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Sprint",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "54053fd8-657c-41f7-ada4-3f4abe78a935",
+                    "path": "<Mouse>/rightButton",
+                    "interactions": "Press(pressPoint=0.2,behavior=2)",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Zoom",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }
