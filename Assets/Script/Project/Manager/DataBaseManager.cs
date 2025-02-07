@@ -1,12 +1,12 @@
 using UnityEngine;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
-using System.Collections.Generic;
 using Mirror;
+using System.Data;
 
 public class DataBaseManager
 {
-    private static MySqlConnection _connection;
+    //private static MySqlConnection _connection;
     private static DataBaseManager instance;
 
     public static DataBaseManager Instance
@@ -22,7 +22,7 @@ public class DataBaseManager
         }
     }
 
-    private const string _dataBaseQuery = "Server=localhost;Port=3306;Database=game_database;Uid=root;Pwd=tlawnsgud~159357";
+    private const string _dataBaseQuery = "Server=localhost;Port=3306;Database=game_database;Uid=root;Pwd=tlawnsgud~159357;Charset=utf8mb4";
 
     private const string _checkId = "SELECT COUNT(*) FROM game_database.player_information WHERE player_id = @player_id;";
 
@@ -40,21 +40,17 @@ public class DataBaseManager
     {
         try
         {
-            if (_connection == null)
+            using (MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
             {
-                using (MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
-                {
-                    _connection = connection;
-
-                    connection.Open();
-                }
+                connection.Open();
             }
 
             return CreateReceiveMessage(DB_MessageCode.ConnectionSuccess);
         }
         catch (Exception ex)
         {
-            Debug.Log(ex.Message);
+            Debug.LogError("연결오류" + ex.Message);
+            Debug.LogError(ex.StackTrace);
             return CreateReceiveMessage(DB_MessageCode.ConnectionFail);
         }
     }
@@ -129,26 +125,25 @@ public class DataBaseManager
     {
         try
         {
-            using(MySqlCommand mySqlCommand = new MySqlCommand(_insertId, _connection))
+            using(MySqlConnection connection = new MySqlConnection(_dataBaseQuery)) //using : 자원 생성 해제. { } 범위 안에서 유효하다.
             {
-                mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
+                using(MySqlCommand mySqlCommand = new MySqlCommand(_insertId, connection))
+                {
+                    mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
 
-                mySqlCommand.Parameters.AddWithValue(_parameter_password, message._userPassword);
+                    mySqlCommand.Parameters.AddWithValue(_parameter_password, message._userPassword);
 
-                _connection.Open();
+                    connection.Open();
 
-                mySqlCommand.ExecuteNonQuery();
-            }      
+                    mySqlCommand.ExecuteNonQuery();
+                }
+            }
 
             return CreateReceiveMessage(DB_MessageCode.INSERT_Success);
         }
         catch(Exception ex)
         {
             return CreateReceiveMessage(DB_MessageCode.INSERT_Fall, ex.Message);
-        }
-        finally
-        {
-            _connection.Close();
         }
     }
 
@@ -171,30 +166,28 @@ public class DataBaseManager
 
     private bool CheckUserPassword(RequestDBMessage message)
     {
-        
         try
         {
-            using (MySqlCommand mySqlCommand = new MySqlCommand(_checkPassword, _connection))
+            using(MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
             {
-                
-                mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
-                mySqlCommand.Parameters.AddWithValue(_parameter_password, message._userPassword);
+                using (MySqlCommand mySqlCommand = new MySqlCommand(_checkPassword, connection))
+                {
 
-                _connection.Open();
-        
-                int result = Convert.ToInt32(mySqlCommand.ExecuteScalar());
-        
-                return result > 0;
+                    mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
+                    mySqlCommand.Parameters.AddWithValue(_parameter_password, message._userPassword);
+
+                    connection.Open();
+
+                    int result = Convert.ToInt32(mySqlCommand.ExecuteScalar());
+
+                    return result > 0;
+                }
             }
         }
         catch (Exception ex)
         {
             Debug.Log(ex.Message);
             return false;
-        }
-        finally
-        {
-            _connection.Close();
         }
     }
 
@@ -202,25 +195,24 @@ public class DataBaseManager
     {
         try
         {
-            using (MySqlCommand mySqlCommand = new MySqlCommand(_checkId, _connection))
+            using(MySqlConnection connection = new MySqlConnection(_dataBaseQuery))
             {
-                mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
+                using (MySqlCommand mySqlCommand = new MySqlCommand(_checkId, connection))
+                {
+                    mySqlCommand.Parameters.AddWithValue(_parameter_id, message._userId);
 
-                _connection.Open();
+                    connection.Open();
 
-                int result = Convert.ToInt32(mySqlCommand.ExecuteScalar());
+                    int result = Convert.ToInt32(mySqlCommand.ExecuteScalar());
 
-                return result > 0;
+                    return result > 0;
+                }
             }
         }
         catch (Exception ex)
         {
             Debug.Log(ex.Message);
             return false;
-        }
-        finally
-        {
-            _connection.Close();
         }
     }
 

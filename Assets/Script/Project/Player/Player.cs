@@ -3,21 +3,30 @@ using Mirror;
 
 public class Player : NetworkBehaviour
 {
-    private PlayerInputSystem _inputSystem;
-    private PlayerCamera _playerCamera;
-    private Rigidbody _rigidbody;
-    private Animator _animator;
-    private Camera _camera;
+    protected PlayerInputSystem _inputSystem;
+    protected PlayerCamera _playerCamera;
+    protected PlayerGun _gun;
+    protected Rigidbody _rigidbody;
+    protected Animator _animator;
+    protected Camera _camera;
 
-    private readonly int _animationMovement = Animator.StringToHash("SpeedValue");
-    private readonly int _animationFire = Animator.StringToHash("Fire");
-    private readonly int _animationReload = Animator.StringToHash("Reloading");
+    public PlayerGun Gun
+    {
+        get => _gun;
+        set => _gun = value;
+    }
+
+    protected readonly int _animationMovement = Animator.StringToHash("SpeedValue");
+    protected readonly int _animationFire = Animator.StringToHash("Fire");
+    protected readonly int _animationReload = Animator.StringToHash("Reloading");
 
     private float _currentMoveSpeed = 3f;
     private float _targetSpeed;
     private float _speed;
     private float _targetRotation;
     private float _rotationVelocity;
+    private float _currentZoomRotation;
+    private float _zoomRotationVelocity;
 
     private bool _isZoomMode;
 
@@ -29,21 +38,15 @@ public class Player : NetworkBehaviour
     private void InitializeOnAwakePlayer()
     {
         _rigidbody = GetComponent<Rigidbody>();
+
         _inputSystem = GetComponent<PlayerInputSystem>();
+
         _animator = GetComponent<Animator>();
         _animator.applyRootMotion = true;
+
         _playerCamera = GetComponentInChildren<PlayerCamera>();
+
         _camera = Camera.main;
-    }
-
-    private void OnEnable()
-    {
-        OnEnablePlayer();
-    }
-
-    private void OnEnablePlayer()
-    {
-        SettingAction(true);
     }
 
     private void OnDisable()
@@ -58,26 +61,97 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
-        
+        SettingAction(true);
+    }
+
+    private void SettingAction(bool isEnable)
+    {
+        if (isOwned)
+        {
+            _inputSystem.SetSprintAction(Sprint, isEnable);
+            _inputSystem.SetAttackAction(Attack, isEnable);
+            _inputSystem.SetReloadAction(Reload, isEnable);
+            _inputSystem.SetZoomAction(Zoom, isEnable);
+        }
     }
 
     private void Update()
     {
-        if (_isZoomMode)
+        if (isOwned &&_isZoomMode) //줌 모드 이면서 isOwned.
         {
-            float mouseDelta = _inputSystem.MouseDelta;
+            float mouseDelta = _inputSystem.MouseDelta / 5f;
 
-            Quaternion rotation = Quaternion.Euler(0f, mouseDelta, 0f);
+            _currentZoomRotation += mouseDelta;
 
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 3f * Time.fixedDeltaTime);
+            float smoothRotation = Mathf.SmoothDampAngle(transform.rotation.eulerAngles.y, _currentZoomRotation, ref _zoomRotationVelocity, 0.1f);
+
+            transform.rotation = Quaternion.Euler(0f,smoothRotation, 0f);
         }
     }
 
     private void OnAnimatorMove()
     {
+        if (isOwned)
+        {
+            Movement();
+        }
+    }
+
+    private void Sprint(bool isSprint)
+    {
+        float speed = isSprint ? 5f : 3f;
+
+        _currentMoveSpeed = speed;
+    }
+
+    private void Attack(bool isAttack)
+    {
+        if (isAttack)
+        {
+            AttackRotation();
+
+            _gun.Fire();
+
+            _animator.SetTrigger(_animationFire);
+        }
+    }
+
+    private void AttackRotation()
+    {
+        float targetAngle = Camera.main.transform.rotation.eulerAngles.y;
+
+        transform.rotation = Quaternion.Euler(0f, targetAngle, 0f);
+    }
+
+    private void Zoom(bool isZoom)
+    {
+        if (isZoom)
+        {
+            float targetAngle = Camera.main.transform.rotation.eulerAngles.y; //현재 카메라 회전 값.
+
+            _currentZoomRotation = targetAngle; //누적된 회전값을 현재 사용해야하는 회전값으로 초기화.
+
+            transform.rotation = Quaternion.Euler(0f, targetAngle, 0f); //회전.
+        }
+
+        _isZoomMode = isZoom;
+
+        _playerCamera.Zoom(isZoom);
+    }
+
+    private void Reload(bool isReload)
+    {
+        if (isReload)
+        {
+            _animator.SetTrigger(_animationReload);
+        }
+    }
+
+    private void Movement()
+    {
         _targetSpeed = _currentMoveSpeed;
 
-        if(_inputSystem.MoveVector == Vector2.zero)
+        if (_inputSystem.MoveVector == Vector2.zero)
         {
             _targetSpeed = 0f;
         }
@@ -86,7 +160,7 @@ public class Player : NetworkBehaviour
 
         bool isSpeedChange = animationSpeed < _targetSpeed - 0.1f || animationSpeed > _targetSpeed + 0.1f;
 
-        if(isSpeedChange)
+        if (isSpeedChange)
         {
             _speed = Mathf.Lerp(animationSpeed, _targetSpeed, 100f * Time.fixedDeltaTime);
 
@@ -99,7 +173,7 @@ public class Player : NetworkBehaviour
 
         Vector3 inputDirection = new Vector3(_inputSystem.MoveVector.x, 0f, _inputSystem.MoveVector.y).normalized;
 
-        if(inputDirection != Vector3.zero)
+        if (inputDirection != Vector3.zero && !_isZoomMode)
         {
             _targetRotation = Mathf.Atan2(inputDirection.x, inputDirection.z) * Mathf.Rad2Deg + _camera.transform.eulerAngles.y;
 
@@ -117,52 +191,5 @@ public class Player : NetworkBehaviour
         _rigidbody.linearVelocity = moveVleocity;
 
         _animator.SetFloat(_animationMovement, _speed);
-    }
-
-    private void SettingAction(bool isEnable)
-    {
-        _inputSystem.SetSprintAction(Sprint, isEnable);
-        _inputSystem.SetAttackAction(Attack, isEnable);
-        _inputSystem.SetReloadAction(Reload, isEnable);
-        _inputSystem.SetZoomAction(Zoom, isEnable);
-        if (isLocalPlayer)
-        {
-            
-        }
-    }
-
-    private void Sprint(bool isSprint)
-    {
-        float speed = isSprint ? 5f : 3f;
-
-        _currentMoveSpeed = speed;
-    }
-
-    private void Attack(bool isAttack)
-    {
-        if (isAttack)
-        {
-            _animator.SetTrigger(_animationFire);
-        }
-    }
-
-    private void Zoom(bool isZoom)
-    {
-        _isZoomMode = isZoom;
-
-        _playerCamera.Zoom(isZoom);
-    }
-
-    private void Reload(bool isReload)
-    {
-        if (isReload)
-        {
-            _animator.SetTrigger(_animationReload);
-        }
-    }
-
-    private void Movement()
-    {
-
     }
 }

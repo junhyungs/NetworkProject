@@ -1,5 +1,5 @@
 using UnityEngine;
-using MySql.Data.MySqlClient;
+using MySqlConnector;
 using System;
 using System.Data;
 

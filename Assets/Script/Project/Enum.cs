@@ -18,3 +18,9 @@ public enum AuthenticatorCode
     Success,
     Fail
 }
+
+public enum SpawnEnumList
+{
+    Player,
+    Zombie,
+}

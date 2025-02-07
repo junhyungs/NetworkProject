@@ -29,12 +29,10 @@ public class PlayerCamera : NetworkBehaviour
 
     private void Start()
     {
-        SetCamera();
-    }
-
-    public override void OnStartLocalPlayer()
-    {
-        SetCamera();
+        if (isOwned)
+        {
+            SetCamera();
+        }
     }
 
     private void SetCamera()
@@ -47,11 +45,6 @@ public class PlayerCamera : NetworkBehaviour
         {
             cinemachineCamera.Target.TrackingTarget = transform;
         }
-
-        if (isLocalPlayer)
-        {
-            
-        }
     }
 
     private void Update()
@@ -61,6 +54,11 @@ public class PlayerCamera : NetworkBehaviour
             return;
         }
 
+        CameraRotation();
+    }
+
+    private void CameraRotation()
+    {
         Vector3 currentEulerAngles = _rotation.eulerAngles;
 
         currentEulerAngles.y += _playerInputSystem.MouseDelta / _value;

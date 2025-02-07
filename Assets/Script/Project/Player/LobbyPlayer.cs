@@ -1,0 +1,33 @@
+using UnityEngine;
+using Mirror;
+using System.Collections.Generic;
+using System.Linq;
+
+public class LobbyPlayer : Player
+{
+    [Server]
+    public void SetMyPlayer()
+    {
+        var roomManager = Project_RoomManager.Instance;
+
+        var roomSlots = roomManager.roomSlots;
+
+        MyPlayer(roomSlots.ToList());
+    }
+
+    [TargetRpc]
+    private void MyPlayer(List<NetworkRoomPlayer> roomList)
+    {
+        foreach(var networkPlayer in roomList)
+        {
+            if (networkPlayer.isOwned)
+            {
+                var myPlayer = networkPlayer as Project_RoomPlayer;
+
+                Project_RoomPlayer.MyPlayer = myPlayer;
+
+                myPlayer.Player = this;
+            }
+        }
+    }
+}
