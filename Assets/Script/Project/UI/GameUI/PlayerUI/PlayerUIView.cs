@@ -10,6 +10,9 @@ public class PlayerUIView : MonoBehaviour
     [Header("BulletText")]
     [SerializeField] private Text _bulletText;
 
+    [Header("PlayerName")]
+    [SerializeField] private Text _playerName;  
+
     [Header("PlayerImage")]
     [SerializeField] private Image _playerImage;
 
@@ -50,7 +53,15 @@ public class PlayerUIView : MonoBehaviour
             case nameof(_viewModel.CurrentBullet):
                 SetPlayerBulletText();
                 break;
+            case nameof(_viewModel.PlayerName):
+                SetPlayerName(_viewModel.PlayerName);
+                break;
         }
+    }
+
+    private void SetPlayerName(string name)
+    {
+        _playerName.text = name;
     }
 
     private void SetPlayerBulletText()

@@ -137,6 +137,8 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+
         SettingAction(true);
         InitializePlayerUI();
     }
@@ -148,6 +150,10 @@ public class Player : NetworkBehaviour
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, _health);
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, _maxBullet);
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+
+            var myName = connectionToClient.authenticationData as string;
+
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Name, myName);
         }
     }
 
