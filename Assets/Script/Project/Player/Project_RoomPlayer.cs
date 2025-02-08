@@ -17,6 +17,10 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         }
     }
 
+    #region Client
+  
+    #endregion
+
     #region Server
     [Server]
     private void SpawnPlayer()
@@ -46,7 +50,7 @@ public class Project_RoomPlayer : NetworkRoomPlayer
 
         lobbyplayerComponent.SetPlayerData(playerData);
 
-        lobbyplayerComponent.SetMyPlayer();
+        lobbyplayerComponent.SetMyPlayer();   
     }
     #endregion
 }

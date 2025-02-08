@@ -36,7 +36,7 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [SyncVar]
+    [SyncVar(hook = nameof(Hook_Health))]
     private float _health;
     public float SyncHealth
     {
@@ -49,6 +49,11 @@ public class Player : NetworkBehaviour
                 _health = value;
             }
         }
+    }
+
+    private void Hook_Health(float _, float value)
+    {
+        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, value);
     }
 
     [SyncVar]
@@ -82,6 +87,9 @@ public class Player : NetworkBehaviour
     }
     private void Hook_MaxBullet(int _, int value)
     {
+        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, value);
+        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, value);
+
         _currentBullet = value;
     }
     #endregion
@@ -94,6 +102,7 @@ public class Player : NetworkBehaviour
     private float _rotationVelocity;
     private float _currentZoomRotation;
     private float _zoomRotationVelocity;
+    private float _mouseDeltaValue;
 
     private bool _isZoomMode;
 
@@ -129,6 +138,17 @@ public class Player : NetworkBehaviour
     private void Start()
     {
         SettingAction(true);
+        InitializePlayerUI();
+    }
+
+    private void InitializePlayerUI()
+    {
+        if (isOwned)
+        {
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, _health);
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, _maxBullet);
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+        }
     }
 
     private void SettingAction(bool isEnable)
@@ -146,7 +166,7 @@ public class Player : NetworkBehaviour
     {
         if (isOwned &&_isZoomMode) //줌 모드 이면서 isOwned.
         {
-            float mouseDelta = _inputSystem.MouseDelta / 5f;
+            float mouseDelta = _inputSystem.MouseDelta / 8f;
 
             _currentZoomRotation += mouseDelta;
 
@@ -175,14 +195,19 @@ public class Player : NetworkBehaviour
     {
         if (isAttack)
         {
-            AttackRotation();
-
+            if (!_isZoomMode)
+            {
+                AttackRotation();
+            }
+            
             if (_currentBullet <= 0)
             {
                 return;
             }
 
             _currentBullet--;
+
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
             _gun.Fire();
 
@@ -218,6 +243,8 @@ public class Player : NetworkBehaviour
         if (isReload)
         {
             _currentBullet = _maxBullet;
+
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
             _animator.SetTrigger(_animationReload);
         }

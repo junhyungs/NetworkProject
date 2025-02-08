@@ -24,3 +24,16 @@ public enum SpawnEnumList
     Player,
     Zombie,
 }
+
+public enum UIEvent
+{
+    Health,
+    MaxBullet,
+    CurrentBullet
+}
+
+public enum PlayerLiveImage
+{
+    Live,
+    Death
+}
