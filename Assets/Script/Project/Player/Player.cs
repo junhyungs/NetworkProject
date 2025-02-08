@@ -20,7 +20,74 @@ public class Player : NetworkBehaviour
     protected readonly int _animationFire = Animator.StringToHash("Fire");
     protected readonly int _animationReload = Animator.StringToHash("Reloading");
 
-    private float _currentMoveSpeed = 3f;
+    #region SyncProperty
+    [SyncVar]
+    private float _currentMoveSpeed;
+    public float SyncMovespeed
+    {
+        get => _currentMoveSpeed;
+        set
+        {
+            if (isServer)
+            {
+                Debug.Log(value);
+                _currentMoveSpeed = value;
+            }
+        }
+    }
+
+    [SyncVar]
+    private float _health;
+    public float SyncHealth
+    {
+        get => _health;
+        set
+        {
+            if (isServer)
+            {
+                Debug.Log(value);
+                _health = value;
+            }
+        }
+    }
+
+    [SyncVar]
+    private float _damage;
+    public float SyncDamage
+    {
+        get => _damage;
+        set
+        {
+            if(isServer)
+            {
+                Debug.Log(value);
+                _damage = value;
+            }
+        }
+    }
+
+    [SyncVar(hook = nameof(Hook_MaxBullet))]
+    private int _maxBullet;
+    public int SyncMaxBullet
+    {
+        get => _maxBullet;
+        set
+        {
+            if (isServer)
+            {
+                Debug.Log(value);
+                _maxBullet = value;
+            }
+        }
+    }
+    private void Hook_MaxBullet(int _, int value)
+    {
+        _currentBullet = value;
+    }
+    #endregion
+
+    private int _currentBullet;
+
     private float _targetSpeed;
     private float _speed;
     private float _targetRotation;
@@ -110,6 +177,13 @@ public class Player : NetworkBehaviour
         {
             AttackRotation();
 
+            if (_currentBullet <= 0)
+            {
+                return;
+            }
+
+            _currentBullet--;
+
             _gun.Fire();
 
             _animator.SetTrigger(_animationFire);
@@ -143,6 +217,8 @@ public class Player : NetworkBehaviour
     {
         if (isReload)
         {
+            _currentBullet = _maxBullet;
+
             _animator.SetTrigger(_animationReload);
         }
     }
@@ -191,5 +267,19 @@ public class Player : NetworkBehaviour
         _rigidbody.linearVelocity = moveVleocity;
 
         _animator.SetFloat(_animationMovement, _speed);
+    }
+
+    [Server]
+    public virtual void SetPlayerData(PlayerData data)
+    {
+        if(data == null)
+        {
+            return;
+        }
+
+        SyncMovespeed = data.MoveSpeed;
+        SyncHealth = data.Health;
+        SyncDamage = data.Damage;
+        SyncMaxBullet = data.MaxBullet; 
     }
 }

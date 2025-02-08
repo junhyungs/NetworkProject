@@ -17,6 +17,8 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         }
     }
 
+    #region Server
+    [Server]
     private void SpawnPlayer()
     {
         var roomManager = Project_RoomManager.Instance;
@@ -31,9 +33,20 @@ public class Project_RoomPlayer : NetworkRoomPlayer
 
             NetworkServer.Spawn(player, connectionToClient);
 
-            LobbyPlayer lobbyplayerComponent = player.GetComponent<LobbyPlayer>();
-
-            lobbyplayerComponent.SetMyPlayer();
+            SetLobbyPlayer(player);
         }
     }
+
+    [Server]
+    private void SetLobbyPlayer(GameObject player)
+    {
+        LobbyPlayer lobbyplayerComponent = player.GetComponent<LobbyPlayer>();
+
+        var playerData = DataManager.Instance.PlayerData;
+
+        lobbyplayerComponent.SetPlayerData(playerData);
+
+        lobbyplayerComponent.SetMyPlayer();
+    }
+    #endregion
 }

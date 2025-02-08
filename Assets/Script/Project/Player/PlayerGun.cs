@@ -7,6 +7,10 @@ public class PlayerGun : NetworkBehaviour
     [SerializeField] private ParticleSystem _fireParticle;
     [Header("Bullet")]
     [SerializeField] private ParticleSystem _bulletParticle;
+    [Header("FirePosition")]
+    [SerializeField] private Transform _fireTransform;
+
+    private LayerMask _targetLayer;
 
     private void Awake()
     {
@@ -32,11 +36,48 @@ public class PlayerGun : NetworkBehaviour
         }
     }
 
+    private void Start()
+    {
+         _targetLayer = LayerMask.GetMask("Enemy");
+    }
+
     public void Fire()
     {
         if (isOwned)
         {
+            FireRayCast();
             CommandFire();
+        }
+    }
+
+    private void FireRayCast()
+    {
+        Vector3 rayDirection = _fireTransform.forward;
+
+        Debug.DrawRay(_fireTransform.position, rayDirection * 200f, Color.red, 10f);
+
+        if (Physics.Raycast(_fireTransform.position, rayDirection, out RaycastHit hit, 200f, _targetLayer))
+        {
+            NetworkIdentity identity = hit.collider.GetComponent<NetworkIdentity>();
+
+            if(identity != null)
+            {
+                CommandTargetAttack(identity.netId, 10f);
+            }
+        }
+    }
+
+    [Command]
+    private void CommandTargetAttack(uint identityId, float damage)
+    {
+        NetworkIdentity identity = NetworkServer.spawned[identityId];
+
+        ITakeDamaged takeDamaged = identity.GetComponent<ITakeDamaged>();
+
+        if (takeDamaged != null)
+        {
+            takeDamaged.TakeDamaged(damage);
+            takeDamaged.HitEffect();
         }
     }
 
