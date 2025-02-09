@@ -160,7 +160,7 @@ public class Player : NetworkBehaviour
 
             var myName = connectionToClient.authenticationData as string;
 
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Name, myName);
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, myName);
         }
     }
 
