@@ -33,7 +33,14 @@ public class LobbyPlayer : Player
                 Project_RoomPlayer.MyPlayer = myPlayer;
 
                 myPlayer.Player = this;
+
+                NickName = PlayerInformation.NickName;
+
+                GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, NickName);
+
+                break;
             }
         }
     }
+
 }

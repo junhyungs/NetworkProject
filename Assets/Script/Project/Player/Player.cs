@@ -94,6 +94,13 @@ public class Player : NetworkBehaviour
     }
     #endregion
 
+    private string _nickName;
+    public string NickName
+    {
+        get => _nickName;
+        set => _nickName = value;
+    }
+
     private int _currentBullet;
 
     private float _targetSpeed;

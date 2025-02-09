@@ -6,6 +6,7 @@ public class PlayerUIViewModel
     private float _playerHealth;
     private int _maxBullet;
     private int _currentBullet;
+    private string _nickName;
 
     public float PlayerHealth
     {
@@ -55,6 +56,27 @@ public class PlayerUIViewModel
         }
     }
 
+    public string NickName
+    {
+        get => _nickName;
+        set
+        {
+            if(_nickName == value)
+            {
+                return;
+            }
+
+            _nickName = value;
+
+            OnPropertyChanged(nameof(NickName));
+        }
+    }
+
+    public void SetPlayerNickName(string nickName)
+    {
+        NickName = nickName;
+    }
+
     public void SetPlayerHealth(float health)
     {
         PlayerHealth = health;
@@ -82,6 +104,7 @@ public class PlayerUIViewModel
         GameUIManager.Instance.RegisterPlayerUIEvent<float>(UIEvent.Health, SetPlayerHealth);
         GameUIManager.Instance.RegisterPlayerUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
         GameUIManager.Instance.RegisterPlayerUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
+        GameUIManager.Instance.RegisterPlayerUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
     }
 
     public void UnregisterChangedEventOnDisable()
@@ -89,6 +112,7 @@ public class PlayerUIViewModel
         GameUIManager.Instance.UnRegisterPlayerUIEvent<float>(UIEvent.Health, SetPlayerHealth);
         GameUIManager.Instance.UnRegisterPlayerUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
         GameUIManager.Instance.UnRegisterPlayerUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
+        GameUIManager.Instance.UnRegisterPlayerUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
     }
 }
 

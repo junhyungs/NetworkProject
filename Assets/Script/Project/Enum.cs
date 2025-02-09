@@ -29,7 +29,8 @@ public enum UIEvent
 {
     Health,
     MaxBullet,
-    CurrentBullet
+    CurrentBullet,
+    NickName
 }
 
 public enum PlayerLiveImage
