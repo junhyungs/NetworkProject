@@ -46,7 +46,7 @@ public class Project_RoomPlayer : NetworkRoomPlayer
     {
         LobbyPlayer lobbyplayerComponent = player.GetComponent<LobbyPlayer>();
 
-        var playerData = DataManager.Instance.PlayerData;
+        var playerData = Project_RoomManager.Instance.GetData<PlayerData>(DataKey.Player);
 
         lobbyplayerComponent.SetPlayerData(playerData);
 

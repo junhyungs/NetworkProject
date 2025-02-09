@@ -137,6 +137,8 @@ public class Player : NetworkBehaviour
 
     private void Start()
     {
+        Cursor.lockState = CursorLockMode.Locked;
+
         SettingAction(true);
         InitializePlayerUI();
     }
@@ -246,8 +248,20 @@ public class Player : NetworkBehaviour
 
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
-            _animator.SetTrigger(_animationReload);
+            CommandReloadAnimation();
         }
+    }
+
+    [Command]
+    private void CommandReloadAnimation()
+    {
+        ClientRPCReloadAnimation();
+    }
+
+    [ClientRpc]
+    private void ClientRPCReloadAnimation()
+    {
+        _animator.SetTrigger(_animationReload);
     }
 
     private void Movement()

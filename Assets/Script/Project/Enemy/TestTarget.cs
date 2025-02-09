@@ -41,5 +41,13 @@ public class TestTarget : NetworkBehaviour, ITakeDamaged
         }
     }
 
+    private void Start()
+    {
+        var tt = NetworkServer.spawned;
 
+        foreach(var identity in tt.Values)
+        {
+            Debug.Log($"net id = {identity.netId}, name = {identity.name}, {identity.assetId}, {identity.gameObject.name}");
+        }
+    }
 }

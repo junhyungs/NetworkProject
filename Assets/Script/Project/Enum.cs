@@ -37,3 +37,9 @@ public enum PlayerLiveImage
     Live,
     Death
 }
+
+public enum DataKey
+{
+    Player,
+    Enemy
+}
