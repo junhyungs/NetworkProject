@@ -6,6 +6,10 @@ public class GameUIManager : Singleton<GameUIManager>
 {
     private Dictionary<UIEvent, Delegate> _uiEventDictionary = new Dictionary<UIEvent, Delegate>();
 
+    [Header("CountUI")]
+    [SerializeField] private PlayerCountUI _playerCountUI;
+    public PlayerCountUI PlayerCountUI => _playerCountUI;
+
     #region Client
     public void OnClickExitGame()
     {

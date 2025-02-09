@@ -1,13 +1,12 @@
 using UnityEngine;
 using System.Collections;
+using Mirror;
 
-public class DataManager : NetworkSingleton<DataManager>
+public class DataManager : NetworkBehaviour
 {
     private const string _playerDataPath = "Data/PlayerData";
-    private const string _enemyDataPath = "Data/EnemyData";
 
-    public PlayerData PlayerData { get; private set; }
-    public EnemyData EnemyData { get; private set; }
+    private const string _enemyDataPath = "Data/EnemyData";
 
     public override void OnStartServer()
     {
@@ -31,10 +30,9 @@ public class DataManager : NetworkSingleton<DataManager>
 
         var scriptableObject = request.asset as ScriptableObject;
 
-        if(scriptableObject is  PlayerData data)
-        {
-            PlayerData = data;
-        }
+        var roomManager = Project_RoomManager.Instance;
+
+        roomManager.AddData(DataKey.Player, scriptableObject);
     }
 
     private IEnumerator LoadEnemyData()
@@ -45,9 +43,8 @@ public class DataManager : NetworkSingleton<DataManager>
 
         var scriptableObject = request.asset as ScriptableObject;
 
-        if (scriptableObject is EnemyData data)
-        {
-            EnemyData = data;
-        }
+        var roomManager = Project_RoomManager.Instance;
+
+        roomManager.AddData(DataKey.Enemy, scriptableObject);
     }
 }

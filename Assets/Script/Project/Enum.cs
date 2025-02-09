@@ -30,11 +30,17 @@ public enum UIEvent
     Health,
     MaxBullet,
     CurrentBullet,
-    Name
+    NickName
 }
 
 public enum PlayerLiveImage
 {
     Live,
     Death
+}
+
+public enum DataKey
+{
+    Player,
+    Enemy
 }

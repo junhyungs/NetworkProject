@@ -46,11 +46,20 @@ public class Project_RoomPlayer : NetworkRoomPlayer
     {
         LobbyPlayer lobbyplayerComponent = player.GetComponent<LobbyPlayer>();
 
-        var playerData = DataManager.Instance.PlayerData;
+        var playerData = Project_RoomManager.Instance.GetData<PlayerData>(DataKey.Player);
 
-        lobbyplayerComponent.SetPlayerData(playerData);
-
+        if(playerData != null)
+        {
+            Debug.Log("playerData = null");
+            lobbyplayerComponent.SetPlayerData(playerData);
+        }
+        
         lobbyplayerComponent.SetMyPlayer();   
+    }
+
+    public void ReadyToBegin()
+    {
+        CmdChangeReadyState(true);
     }
     #endregion
 }

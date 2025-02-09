@@ -94,6 +94,13 @@ public class Player : NetworkBehaviour
     }
     #endregion
 
+    private string _nickName;
+    public string NickName
+    {
+        get => _nickName;
+        set => _nickName = value;
+    }
+
     private int _currentBullet;
 
     private float _targetSpeed;
@@ -252,8 +259,20 @@ public class Player : NetworkBehaviour
 
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
-            _animator.SetTrigger(_animationReload);
+            CommandReloadAnimation();
         }
+    }
+
+    [Command]
+    private void CommandReloadAnimation()
+    {
+        ClientRPCReloadAnimation();
+    }
+
+    [ClientRpc]
+    private void ClientRPCReloadAnimation()
+    {
+        _animator.SetTrigger(_animationReload);
     }
 
     private void Movement()

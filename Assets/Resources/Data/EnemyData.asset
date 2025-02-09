@@ -9,9 +9,9 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
+  m_Script: {fileID: 11500000, guid: 254b4c66fb2a99447b8577c4d0845bde, type: 3}
   m_Name: EnemyData
-  m_EditorClassIdentifier: Assembly-CSharp::EnemyData
+  m_EditorClassIdentifier: 
   _moveSpeed: 5
   _damage: 10
-  _health: 1
+  _health: 100

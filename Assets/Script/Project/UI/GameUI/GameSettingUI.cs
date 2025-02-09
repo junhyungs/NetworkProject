@@ -27,10 +27,14 @@ public class GameSettingUI : MonoBehaviour
     {
         if (_settingPanel.activeSelf)
         {
+            Cursor.lockState = CursorLockMode.Locked;
+
             _settingPanel.SetActive(false);
         }
         else
         {
+            Cursor.lockState = CursorLockMode.None;
+
             _settingPanel.SetActive(true);
         }
     }
