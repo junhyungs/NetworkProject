@@ -70,4 +70,33 @@ public class Project_RoomManager : NetworkRoomManager
 
         SceneManager.LoadScene("LoginScene");
     }
+
+    public override void OnRoomServerConnect(NetworkConnectionToClient conn)
+    {
+        ConnectionCount();
+    }
+
+    public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
+    {
+        ConnectionCount();
+    }
+
+    private void ConnectionCount()
+    {
+        var connectionCount = NetworkServer.connections.Count;
+        
+        var gameUIManager = GameUIManager.Instance;
+
+        if(gameUIManager.PlayerCountUI != null)
+        {
+            gameUIManager.PlayerCountUI._currentPlayerCount = connectionCount;
+        }
+    }
+
+    public override void OnServerChangeScene(string newSceneName)
+    {
+        base.OnServerChangeScene(newSceneName);
+
+        ConnectionCount();
+    }
 }

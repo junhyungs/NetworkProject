@@ -56,5 +56,10 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         
         lobbyplayerComponent.SetMyPlayer();   
     }
+
+    public void ReadyToBegin()
+    {
+        CmdChangeReadyState(true);
+    }
     #endregion
 }
