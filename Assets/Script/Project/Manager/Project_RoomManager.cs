@@ -2,11 +2,26 @@ using UnityEngine;
 using Mirror;
 using System.Collections.Generic;
 using UnityEngine.SceneManagement;
+using System;
 
 public class Project_RoomManager : NetworkRoomManager
 {
     private Dictionary<DataKey, ScriptableObject> _dataDictionary = new Dictionary<DataKey, ScriptableObject>();    
     private readonly object _lock = new object();
+    public event Action<int> _readyPlayerCountCallBack;
+   
+    /// <summary>
+    /// isServer
+    /// </summary>
+    private int _readyPlayerCount;
+    public int ReadyPlayerCount => _readyPlayerCount;
+
+    public void SetReadyPlayerCount(bool isReady)
+    {
+        _readyPlayerCount += isReady ? 1 : -1;
+
+        _readyPlayerCountCallBack.Invoke(_readyPlayerCount);
+    }
 
     public static Project_RoomManager Instance
     {

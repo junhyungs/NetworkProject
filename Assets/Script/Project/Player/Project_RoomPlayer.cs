@@ -57,9 +57,17 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         lobbyplayerComponent.SetMyPlayer();   
     }
 
-    public void ReadyToBegin()
+    public void ReadyToBegin(bool isReady)
     {
-        CmdChangeReadyState(true);
+        CmdChangeReadyState(isReady);
+    }
+
+    [Command]
+    public void CommandRoomPlayerReady(bool isReady)
+    {
+        var roomManager = Project_RoomManager.Instance;
+
+        roomManager.SetReadyPlayerCount(isReady);
     }
     #endregion
 }
