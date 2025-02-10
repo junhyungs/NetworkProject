@@ -5,6 +5,11 @@ using System.Linq;
 
 public class LobbyPlayer : Player
 {
+    protected override void Start()
+    {
+        base.Start();
+    }
+
     [Server]
     public override void SetPlayerData(PlayerData data)
     {
@@ -34,9 +39,11 @@ public class LobbyPlayer : Player
 
                 myPlayer.Player = this;
 
-                NickName = PlayerInformation.NickName;
+                var nickName = PlayerInformation.NickName;
 
-                GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, NickName);
+                myPlayer.CommandSetNickName(nickName);
+
+                GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, nickName);
 
                 break;
             }

@@ -4,8 +4,21 @@ using Mirror;
 public class Project_RoomPlayer : NetworkRoomPlayer
 {
     public static Project_RoomPlayer MyPlayer { get; set; }
-
     public Player Player { get; set; }
+
+    [SyncVar]
+    private string _myNickName;
+    public string SyncNickName
+    {
+        get => _myNickName;
+        set
+        {
+            if (isServer)
+            {
+                _myNickName = value;
+            }
+        }
+    }
 
     public override void Start()
     {
@@ -50,7 +63,6 @@ public class Project_RoomPlayer : NetworkRoomPlayer
 
         if(playerData != null)
         {
-            Debug.Log("playerData = null");
             lobbyplayerComponent.SetPlayerData(playerData);
         }
         
@@ -68,6 +80,12 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         var roomManager = Project_RoomManager.Instance;
 
         roomManager.SetReadyPlayerCount(isReady);
+    }
+
+    [Command]
+    public void CommandSetNickName(string nickName)
+    {
+        SyncNickName = nickName;
     }
     #endregion
 }

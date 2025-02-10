@@ -108,10 +108,57 @@ public class Project_RoomManager : NetworkRoomManager
         }
     }
 
-    public override void OnServerChangeScene(string newSceneName)
+    /// <summary>
+    /// 씬이 전환되면 호출되는 메서드.
+    /// </summary>
+    /// <param name="sceneName"></param>
+    public override void OnRoomServerSceneChanged(string sceneName)
     {
-        base.OnServerChangeScene(newSceneName);
+        if (sceneName == "Assets/Scenes/ProjectScene.unity")
+        {
+            ConnectionCount();
+        }
+    }
 
-        ConnectionCount();
+    /// <summary>
+    /// OnServerSceneChanged -> if(sceneName != RoomScene) == true -> SceneLoadedForPlayer
+    /// 메서드 내부에서 GameScenePlayer 생성 후 호출. (초기화 목적)
+    /// </summary>
+    /// <param name="conn"></param>
+    /// <param name="roomPlayer"></param>
+    /// <param name="gamePlayer"></param>
+    /// <returns></returns>
+    public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
+    {
+        var roomPlayerComponent = roomPlayer.GetComponent<Project_RoomPlayer>();
+        var gamePlayerComponent = gamePlayer.GetComponent<GamePlayer>();
+
+        if(roomPlayerComponent == null || gamePlayerComponent == null)
+        {
+            return false;
+        }
+
+        var data = GetData<PlayerData>(DataKey.Player);
+        gamePlayerComponent.PlayerData = data;
+
+        return true;
+    }
+
+    /// <summary>
+    /// GameScene에서 생성되는 Player의 위치.
+    /// </summary>
+    /// <returns></returns>
+    public override Transform GetStartPosition()
+    {
+        var playerTransform = FindFirstObjectByType<PlayerSpawnPosition>();
+
+        if(playerTransform == null)
+        {
+            return null;
+        }
+
+        var randomTransform = playerTransform.GetSpawnTransform();
+
+        return randomTransform;
     }
 }

@@ -94,13 +94,6 @@ public class Player : NetworkBehaviour
     }
     #endregion
 
-    private string _nickName;
-    public string NickName
-    {
-        get => _nickName;
-        set => _nickName = value;
-    }
-
     private int _currentBullet;
 
     private float _targetSpeed;
@@ -142,7 +135,7 @@ public class Player : NetworkBehaviour
         SettingAction(false);
     }
 
-    private void Start()
+    protected virtual void Start()
     {
         Cursor.lockState = CursorLockMode.Locked;
 
@@ -157,10 +150,6 @@ public class Player : NetworkBehaviour
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, _health);
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, _maxBullet);
             GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
-
-            var myName = connectionToClient.authenticationData as string;
-
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, myName);
         }
     }
 
