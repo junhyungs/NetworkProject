@@ -22,6 +22,7 @@ public class SpawnSystem : NetworkBehaviour
         }
     }
 
+    #region SpawnItem
     private GameObject[] SpawnItemPrefabs()
     {
         GameObject[] registerPrefabs = new GameObject[_itemObjectArray.Length];
@@ -103,8 +104,10 @@ public class SpawnSystem : NetworkBehaviour
     {
         if (_randomIndexSet.Contains(index))
         {
-            Debug.Log($"ªË¡¶µ» Index{index}");
             _randomIndexSet.Remove(index);
         }
     }
+    #endregion
+    #region SpawnEnemy
+    #endregion
 }

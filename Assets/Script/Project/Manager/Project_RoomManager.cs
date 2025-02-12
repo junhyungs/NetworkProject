@@ -114,6 +114,13 @@ public class Project_RoomManager : NetworkRoomManager
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
         ConnectionCount();
+
+        if(!Utils.IsSceneActive(GameplayScene))
+        {
+            return;
+        }
+
+        GameManager.Instance.RemoveLocalPlayer(conn.connectionId);
     }
 
     private void ConnectionCount()
