@@ -13,18 +13,9 @@ public class Item : NetworkBehaviour
 
     private SphereCollider _sphereCollider;
     private Action<int> _returnCallBack;
+    private Coroutine _returnDelayCoroutine;
     private Vector3 _rotateDirection = Vector3.up;
     private int _currentIndex;
-
-    public ObjectName CurrentName
-    {
-        get
-        {
-            var name = _itemData.ItemName;
-
-            return name;
-        }
-    }
 
     private void Awake()
     {
@@ -50,15 +41,30 @@ public class Item : NetworkBehaviour
 
     public void UseItem(GamePlayer player)
     {
+        if(_returnDelayCoroutine != null)
+        {
+            StopCoroutine(_returnDelayCoroutine);
+
+            _returnDelayCoroutine = null;
+        }
+      
         _sphereCollider.enabled = false;
 
         _itemData.UseItem(player);
     }
 
     [Server]
+    public void StartReturnDelayCoroutine()
+    {
+        _returnDelayCoroutine = StartCoroutine(ReturnDelay());
+    }
+
+    [Server]
     public IEnumerator ReturnDelay()
     {
         yield return new WaitForSeconds(20f);
+
+        _returnDelayCoroutine = null;
 
         ReturnItem();
     }

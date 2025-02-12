@@ -56,6 +56,11 @@ public class GamePlayer : Player
     [Command]
     private void CommandPickUpItem(NetworkIdentity itemIdentity)
     {
+        if(itemIdentity == null)
+        {
+            return;
+        }
+
         if(itemIdentity.TryGetComponent(out Item item))
         {
             item.UseItem(this);

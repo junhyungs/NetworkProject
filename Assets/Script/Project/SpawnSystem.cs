@@ -92,7 +92,7 @@ public class SpawnSystem : NetworkBehaviour
 
                 Item item = randomItem.GetComponent<Item>();
                 item.SetEvent(UnSetItem, randomTransformIndex);
-                StartCoroutine(item.ReturnDelay());
+                item.StartReturnDelayCoroutine();
 
                 _randomIndexSet.Add(randomTransformIndex);
             }

@@ -22,6 +22,8 @@ public class Player : NetworkBehaviour
     protected readonly int _animationMovement = Animator.StringToHash("SpeedValue");
     protected readonly int _animationFire = Animator.StringToHash("Fire");
     protected readonly int _animationReload = Animator.StringToHash("Reloading");
+    protected readonly int _animationWalk = Animator.StringToHash("Walk");
+    protected readonly int _animationRun = Animator.StringToHash("Run");
 
     #region SyncProperty
     [SyncVar]
@@ -201,9 +203,22 @@ public class Player : NetworkBehaviour
 
     private void Sprint(bool isSprint)
     {
-        float speed = isSprint ? 5f : 3f;
+        _animator.SetBool(_animationRun, isSprint);
 
-        _currentMoveSpeed = speed;
+        if (isSprint)
+        {
+            CommandSetSprintSpeed(2f);
+        }
+        else
+        {
+            CommandSetSprintSpeed(-2f);
+        }
+    }
+
+    [Command]
+    private void CommandSetSprintSpeed(float speedValue)
+    {
+        _currentMoveSpeed += speedValue;
     }
 
     private void Attack(bool isAttack)
@@ -317,9 +332,23 @@ public class Player : NetworkBehaviour
         Vector3 moveVleocity = moveDirection.normalized * _speed;
 
         moveVleocity.y = _rigidbody.linearVelocity.y;
-
+        
         _rigidbody.linearVelocity = moveVleocity;
 
-        _animator.SetFloat(_animationMovement, _speed);
+        AnimationMovement();
+        //_animator.SetFloat(_animationMovement, _speed);
+    }
+
+    private void AnimationMovement()
+    {
+        bool moveAnimationControl = _inputSystem.MoveVector != Vector2.zero;
+        bool isRun = _animator.GetBool(_animationRun);
+
+        if (!moveAnimationControl && isRun)
+        {
+            _animator.SetBool(_animationRun, moveAnimationControl);
+        }
+
+        _animator.SetBool(_animationWalk, moveAnimationControl);
     }
 }
