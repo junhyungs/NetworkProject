@@ -7,12 +7,16 @@ public class SpawnSystem : NetworkBehaviour
 {
     [Header("Item")]    
     [SerializeField] private GameObject[] _itemObjectArray;
-    [SerializeField] private Transform[] _spawnTransformArray;
+    [SerializeField] private Transform[] _itemSpawnTransformArray;
     [SerializeField] private float _itemSpawnTime;
     private Vector3 _spawnPosition = new Vector3(0f, 1f, 0f);
     private HashSet<int> _randomIndexSet = new HashSet<int>();
 
-    //[Header("Enemy")]
+    [Header("Enemy")]
+    [SerializeField] private GameObject[] _enemyObjectArray;
+    [SerializeField] private Transform[] _enemySpawnTransformArray;
+    [SerializeField] private int _spawnCount;
+    [SerializeField] private float _nextWaveCoolTime;
 
     private void Start()
     {
@@ -72,16 +76,16 @@ public class SpawnSystem : NetworkBehaviour
         {
             yield return new WaitForSeconds(_itemSpawnTime);
 
-            if(_randomIndexSet.Count >= _spawnTransformArray.Length)
+            if(_randomIndexSet.Count >= _itemSpawnTransformArray.Length)
             {
                 continue;
             }
 
-            int randomTransformIndex = Random.Range(0, _spawnTransformArray.Length);
+            int randomTransformIndex = Random.Range(0, _itemSpawnTransformArray.Length);
             
             if (!_randomIndexSet.Contains(randomTransformIndex))
             {
-                Transform randomTransform = _spawnTransformArray[randomTransformIndex];
+                Transform randomTransform = _itemSpawnTransformArray[randomTransformIndex];
 
                 int randomItemIndex = Random.Range(0, _itemObjectArray.Length);
                 var randomItemName = _itemObjectArray[randomItemIndex].name;
