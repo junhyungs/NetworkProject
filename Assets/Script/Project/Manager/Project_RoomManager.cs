@@ -6,8 +6,7 @@ using System;
 
 public class Project_RoomManager : NetworkRoomManager
 {
-    private Dictionary<DataKey, ScriptableObject> _dataDictionary = new Dictionary<DataKey, ScriptableObject>();    
-    private readonly object _lock = new object();
+    private Dictionary<string, GameObject> _registerPrefabDictionary;
     public event Action<int> _readyPlayerCountCallBack;
    
     /// <summary>
@@ -45,27 +44,48 @@ public class Project_RoomManager : NetworkRoomManager
         }
     }
 
-    public void AddData(DataKey key, ScriptableObject data)
+    public override void OnStartServer()
     {
-        lock (_lock)
+        _registerPrefabDictionary = new Dictionary<string, GameObject>();
+
+        foreach(var prefab in spawnPrefabs)
         {
-            if (!_dataDictionary.ContainsKey(key))
+            var prefabName = prefab.name;
+
+            if (!_registerPrefabDictionary.ContainsKey(prefabName))
             {
-                _dataDictionary.Add(key, data);
+                _registerPrefabDictionary.Add(prefabName, prefab);
             }
         }
     }
 
-    public T GetData<T>(DataKey key) where T : class
+    public GameObject GetRegisterPrefab(string gameObjectName)
     {
-        if (!_dataDictionary.ContainsKey(key))
+        if (_registerPrefabDictionary.ContainsKey(gameObjectName))
+        {
+            return _registerPrefabDictionary[gameObjectName];
+        }
+
+        GameObject prefab = null;
+
+        foreach(var spawnprefab in spawnPrefabs)
+        {
+            if(spawnprefab.name == gameObjectName)
+            {
+                prefab = spawnprefab;
+
+                _registerPrefabDictionary.Add(prefab.name, prefab);
+
+                break;
+            }
+        }
+
+        if(prefab == null)
         {
             return null;
         }
 
-        var data = _dataDictionary[key];
-
-        return data is T Tdata ? Tdata : null;
+        return prefab;
     }
 
     public void StopGame()
@@ -130,17 +150,6 @@ public class Project_RoomManager : NetworkRoomManager
     /// <returns></returns>
     public override bool OnRoomServerSceneLoadedForPlayer(NetworkConnectionToClient conn, GameObject roomPlayer, GameObject gamePlayer)
     {
-        var roomPlayerComponent = roomPlayer.GetComponent<Project_RoomPlayer>();
-        var gamePlayerComponent = gamePlayer.GetComponent<GamePlayer>();
-
-        if(roomPlayerComponent == null || gamePlayerComponent == null)
-        {
-            return false;
-        }
-
-        var data = GetData<PlayerData>(DataKey.Player);
-        gamePlayerComponent.PlayerData = data;
-
         return true;
     }
 

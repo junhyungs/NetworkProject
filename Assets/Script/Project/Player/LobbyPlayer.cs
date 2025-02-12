@@ -11,12 +11,6 @@ public class LobbyPlayer : Player
     }
 
     [Server]
-    public override void SetPlayerData(PlayerData data)
-    {
-        base.SetPlayerData(data);
-    }
-
-    [Server]
     public void SetMyPlayer()
     {
         var roomManager = Project_RoomManager.Instance;

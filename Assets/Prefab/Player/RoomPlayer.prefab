@@ -10522,6 +10522,7 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
+  _playerData: {fileID: 11400000, guid: 01b7ef97aa91ebd49ab32d19bed603df, type: 2}
 --- !u!114 &2057549996853070329
 MonoBehaviour:
   m_ObjectHideFlags: 0

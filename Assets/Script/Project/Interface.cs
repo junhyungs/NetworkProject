@@ -10,3 +10,8 @@ public interface ITakeDamaged
     [ClientRpc]
     public void HitEffect();
 }
+
+public interface IItemReturnEvent
+{
+    public void SetEvent(Action<Transform> callBack);
+}

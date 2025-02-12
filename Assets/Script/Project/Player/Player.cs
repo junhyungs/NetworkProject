@@ -3,6 +3,9 @@ using Mirror;
 
 public class Player : NetworkBehaviour
 {
+    [Header("Data")]
+    [SerializeField] private PlayerData _playerData;
+
     protected PlayerInputSystem _inputSystem;
     protected PlayerCamera _playerCamera;
     protected PlayerGun _gun;
@@ -22,6 +25,20 @@ public class Player : NetworkBehaviour
 
     #region SyncProperty
     [SyncVar]
+    private float _damage;
+    public float SyncDamage
+    {
+        get => _damage;
+        set
+        {
+            if (isServer)
+            {
+                _damage = value;
+            }
+        }
+    }
+
+    [SyncVar]
     private float _currentMoveSpeed;
     public float SyncMovespeed
     {
@@ -30,14 +47,20 @@ public class Player : NetworkBehaviour
         {
             if (isServer)
             {
-                Debug.Log(value);
                 _currentMoveSpeed = value;
             }
         }
     }
 
-    [SyncVar(hook = nameof(Hook_Health))]
+    [SyncVar(hook = nameof(HooK_Health))]
     private float _health;
+    private void HooK_Health(float _, float value)
+    {
+        if (isOwned)
+        {
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, value);
+        }
+    }
     public float SyncHealth
     {
         get => _health;
@@ -45,34 +68,20 @@ public class Player : NetworkBehaviour
         {
             if (isServer)
             {
-                Debug.Log(value);
                 _health = value;
-            }
-        }
-    }
-
-    private void Hook_Health(float _, float value)
-    {
-        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, value);
-    }
-
-    [SyncVar]
-    private float _damage;
-    public float SyncDamage
-    {
-        get => _damage;
-        set
-        {
-            if(isServer)
-            {
-                Debug.Log(value);
-                _damage = value;
             }
         }
     }
 
     [SyncVar(hook = nameof(Hook_MaxBullet))]
     private int _maxBullet;
+    private void Hook_MaxBullet(int _, int value)
+    {
+        if (isOwned)
+        {
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, value);
+        }
+    }
     public int SyncMaxBullet
     {
         get => _maxBullet;
@@ -80,21 +89,13 @@ public class Player : NetworkBehaviour
         {
             if (isServer)
             {
-                Debug.Log(value);
                 _maxBullet = value;
             }
         }
     }
-    private void Hook_MaxBullet(int _, int value)
-    {
-        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, value);
-        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, value);
 
-        _currentBullet = value;
-    }
     #endregion
-
-    private int _currentBullet;
+    private int _currentBullet = 20;
 
     private float _targetSpeed;
     private float _speed;
@@ -102,7 +103,6 @@ public class Player : NetworkBehaviour
     private float _rotationVelocity;
     private float _currentZoomRotation;
     private float _zoomRotationVelocity;
-    private float _mouseDeltaValue;
 
     private bool _isZoomMode;
 
@@ -114,14 +114,10 @@ public class Player : NetworkBehaviour
     private void InitializeOnAwakePlayer()
     {
         _rigidbody = GetComponent<Rigidbody>();
-
         _inputSystem = GetComponent<PlayerInputSystem>();
-
         _animator = GetComponent<Animator>();
         _animator.applyRootMotion = true;
-
         _playerCamera = GetComponentInChildren<PlayerCamera>();
-
         _camera = Camera.main;
     }
 
@@ -139,18 +135,35 @@ public class Player : NetworkBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
 
+        ReadData();
         SettingAction(true);
-        InitializePlayerUI();
     }
 
-    private void InitializePlayerUI()
+    private void ReadData()
     {
-        if (isOwned)
+        if (_playerData == null || !isOwned)
         {
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, _health);
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, _maxBullet);
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+            return;
         }
+
+        float health = _playerData.Health;
+        float damage = _playerData.Damage;
+        float moveSpeed = _playerData.MoveSpeed;
+        int maxBullet = _playerData.MaxBullet;
+
+        CommandInitializePlayerData(health, damage, moveSpeed, maxBullet);
+
+        _currentBullet = maxBullet;
+        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+    }
+
+    [Command]
+    private void CommandInitializePlayerData(float health, float damage, float moveSpeed, int maxBullet)
+    {
+        SyncHealth = health;
+        SyncMaxBullet = maxBullet;
+        SyncDamage = damage;
+        SyncMovespeed = moveSpeed;
     }
 
     private void SettingAction(bool isEnable)
@@ -308,19 +321,5 @@ public class Player : NetworkBehaviour
         _rigidbody.linearVelocity = moveVleocity;
 
         _animator.SetFloat(_animationMovement, _speed);
-    }
-
-    [Server]
-    public virtual void SetPlayerData(PlayerData data)
-    {
-        if(data == null)
-        {
-            return;
-        }
-
-        SyncMovespeed = data.MoveSpeed;
-        SyncHealth = data.Health;
-        SyncDamage = data.Damage;
-        SyncMaxBullet = data.MaxBullet; 
     }
 }

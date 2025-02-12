@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using Unity.VisualScripting;
 
 public class GamePlayer : Player
 {
@@ -17,8 +18,6 @@ public class GamePlayer : Player
         if (isOwned)
         {
             SetMyPlayer();
-
-            CommandInitGamePlayerData();
         }
     }
 
@@ -31,19 +30,38 @@ public class GamePlayer : Player
         GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, myPlayer.SyncNickName);
     }
 
-    #region Server
-    [Server]
-    public override void SetPlayerData(PlayerData data)
+    private void OnTriggerEnter(Collider other)
     {
-        base.SetPlayerData(data);
+        bool isItem = other.gameObject.layer == LayerMask.NameToLayer("Item");
+        
+        if (isItem)
+        {
+            PickUpItem(other);
+        }
     }
+
+    private void PickUpItem(Collider other)
+    {
+        if(other.TryGetComponent(out NetworkIdentity identity))
+        {
+            CommandPickUpItem(identity);
+        }
+    }
+
+    #region Server
+  
     #endregion
 
     #region Command
     [Command]
-    private void CommandInitGamePlayerData()
+    private void CommandPickUpItem(NetworkIdentity itemIdentity)
     {
-        SetPlayerData(PlayerData);
+        if(itemIdentity.TryGetComponent(out Item item))
+        {
+            item.UseItem(this);
+
+            item.ReturnItem();
+        }
     }
     #endregion
 

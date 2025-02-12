@@ -9,7 +9,7 @@ public class PlayerSpawnPosition : MonoBehaviour
 
     private List<Transform> _transformList;
 
-    private void Start()
+    private void Awake()
     {
         SetList();
     }

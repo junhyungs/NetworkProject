@@ -23,7 +23,12 @@ public enum SpawnEnumList
 {
     Player,
     Zombie,
+    HealthItem,
+    MoveSpeedItem,
+    PowerUpItem,
+    MaxBulletUpItem
 }
+
 
 public enum UIEvent
 {
@@ -43,4 +48,12 @@ public enum DataKey
 {
     Player,
     Enemy
+}
+
+public enum ObjectName
+{
+    HealthItem,
+    MoveSpeedItem,
+    PowerUpItem,
+    MaxBulletUpItem
 }
