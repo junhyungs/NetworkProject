@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CustomBehaviorTree
 {
-    public abstract class ActionNode<T> : INode
+    public abstract class ActionNode<T> : BehaviorNode
     {
         protected T _baseReference;
 
@@ -11,7 +11,7 @@ namespace CustomBehaviorTree
             _baseReference = baseReference;
         }
 
-        public abstract INode.State Evaluate();
+        public override abstract INode.State Evaluate();
     }
 }
 

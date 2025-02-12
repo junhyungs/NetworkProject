@@ -3,16 +3,19 @@ using System.Collections.Generic;
 
 namespace CustomBehaviorTree
 {
-    public class SequenceNode : INode
+    public class SequenceNode : BehaviorNode
     {
-        private List<INode> _childNodeList;
-
         public SequenceNode(List<INode> childNodeList)
         {
             _childNodeList = childNodeList;
         }
 
-        public INode.State Evaluate()
+        public override void StopBehaviorTree(bool isStop)
+        {
+            base.StopBehaviorTree(isStop);
+        }
+
+        public override INode.State Evaluate()
         {
             bool isList = _childNodeList == null ||
                 _childNodeList.Count == 0;
@@ -25,6 +28,11 @@ namespace CustomBehaviorTree
             foreach(var childNode in  _childNodeList)
             {
                 INode.State state = childNode.Evaluate();
+
+                if (_isStop)
+                {
+                    break;
+                }
 
                 switch (state)
                 {
