@@ -26,8 +26,15 @@ public class Player : NetworkBehaviour
     protected readonly int _animationRun = Animator.StringToHash("Run");
 
     #region SyncProperty
-    [SyncVar]
+    [SyncVar(hook = nameof(Hook_Damage))]
     private float _damage;
+    private void Hook_Damage(float _, float value)
+    {
+        if (isOwned)
+        {
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Damage, value);
+        }
+    }
     public float SyncDamage
     {
         get => _damage;
@@ -40,8 +47,15 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [SyncVar]
+    [SyncVar(hook = nameof(Hook_Speed))]
     private float _currentMoveSpeed;
+    private void Hook_Speed(float _, float value)
+    {
+        if (isOwned)
+        {
+            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Speed, value);
+        }
+    }
     public float SyncMovespeed
     {
         get => _currentMoveSpeed;

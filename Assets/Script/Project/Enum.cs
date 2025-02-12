@@ -35,7 +35,9 @@ public enum UIEvent
     Health,
     MaxBullet,
     CurrentBullet,
-    NickName
+    NickName,
+    Speed,
+    Damage
 }
 
 public enum PlayerLiveImage

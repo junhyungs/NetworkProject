@@ -2,8 +2,9 @@ using System.ComponentModel;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerUIView : MonoBehaviour
+public class PlayerUIView : PlayerUI
 {
+    #region PlayerUI
     [Header("PlayerHP")]
     [SerializeField] private Image _hpFillImage;
 
@@ -18,29 +19,28 @@ public class PlayerUIView : MonoBehaviour
 
     [Header("PlayerSprite")]
     [SerializeField] private Sprite[] _playerSprites;
+    #endregion
 
-    private PlayerUIViewModel _viewModel;
-
-    private void OnEnable()
+    protected override void OnEnable()
     {
-        if(_viewModel == null)
-        {
-            _viewModel = new PlayerUIViewModel();
+        base.OnEnable();
 
-            _viewModel.RegisterChangedEventOnEnable();
-
-            _viewModel.PropertyChanged += OnPropertyChangedEvent;
-        }
+        _viewModel.PropertyChanged += OnPropertyChangedEvent;
     }
-
-    private void OnDisable()
+    
+    protected override void OnDisable()
     {
-        _viewModel.UnregisterChangedEventOnDisable();
+        base.OnDisable();
 
         _viewModel.PropertyChanged -= OnPropertyChangedEvent;
     }
 
-    private void OnPropertyChangedEvent(object sender, PropertyChangedEventArgs eventArgs)
+    protected override void OnDestroy()
+    {
+        base.OnDestroy();
+    }
+
+    protected override void OnPropertyChangedEvent(object sender, PropertyChangedEventArgs eventArgs)
     {
         switch(eventArgs.PropertyName)
         {
