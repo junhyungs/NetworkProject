@@ -15,3 +15,15 @@ public interface IItemReturnEvent
 {
     public void SetEvent(Action<Transform> callBack);
 }
+
+public interface INode
+{
+    public enum State
+    {
+        Success,
+        Fail,
+        Runing
+    }
+
+    public State Evaluate();
+}
