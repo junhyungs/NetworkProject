@@ -520,7 +520,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8011152701108053172}
-  - component: {fileID: 7993001504738400460}
   m_Layer: 0
   m_Name: Hand_R
   m_TagString: Untagged
@@ -546,27 +545,6 @@ Transform:
   - {fileID: 8207597504008767835}
   m_Father: {fileID: 4268494176726224363}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &7993001504738400460
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2042257029538092032}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.17
-  m_Center: {x: 0.09, y: 0, z: 0}
 --- !u!1 &2112264551812464053
 GameObject:
   m_ObjectHideFlags: 0
@@ -1610,7 +1588,6 @@ MonoBehaviour:
   syncDirection: 0
   syncMode: 0
   syncInterval: 0
-  _data: {fileID: 11400000, guid: 0acfb3590b0cf224080cdab572cb5230, type: 2}
   _hitParticleObject: {fileID: 1362418652685942, guid: b369efb4abe69e044890b664115fab9e, type: 3}
   _particleTransform: {fileID: 3176773593807298964}
 --- !u!114 &5103458050679516536
@@ -1657,7 +1634,7 @@ NavMeshAgent:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6495126990502017303}
-  m_Enabled: 1
+  m_Enabled: 0
   m_AgentTypeID: 0
   m_Radius: 0.2
   m_Speed: 3.5
@@ -1980,7 +1957,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6718823414066747998}
-  - component: {fileID: 7291847176041231485}
   m_Layer: 0
   m_Name: Hand_L
   m_TagString: Untagged
@@ -2006,27 +1982,6 @@ Transform:
   - {fileID: 502317765367352162}
   m_Father: {fileID: 9131211145081739863}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!135 &7291847176041231485
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 8039588387203440451}
-  m_Material: {fileID: 0}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_LayerOverridePriority: 0
-  m_IsTrigger: 1
-  m_ProvidesContacts: 0
-  m_Enabled: 1
-  serializedVersion: 3
-  m_Radius: 0.17
-  m_Center: {x: -0.09, y: 0, z: 0}
 --- !u!1 &8201755879331664350
 GameObject:
   m_ObjectHideFlags: 0

@@ -7,8 +7,11 @@ public class ZombieAnimationEvent : MonoBehaviour
     [SerializeField] private GameObject[] _targetObjects;
 
     private Zombie _zombie;
+    private Animator _animator;
     private SphereCollider[] _attackColliders;
     private HashSet<int> _overlapSet = new HashSet<int>();
+
+    private string _findClip = "Die";
 
     public HashSet<int> OverlapSet => _overlapSet;
     public bool IsServer
@@ -19,9 +22,21 @@ public class ZombieAnimationEvent : MonoBehaviour
         }
     }
 
+    public float Damage
+    {
+        get
+        {
+            return _zombie.Damage;
+        }
+    }
+
+    public float DieAnimationLength { get; set; }
+    
     private void Awake()
     {
         _zombie = GetComponent<Zombie>();
+
+        _animator = GetComponent<Animator>();
     }
 
     private void Start()
@@ -29,7 +44,27 @@ public class ZombieAnimationEvent : MonoBehaviour
         if (_zombie.isServer)
         {
             AddComponent();
+
+            DieAnimationLength = GetAnimationLength(_findClip);
         }
+    }
+
+    private float GetAnimationLength(string clipName)
+    {
+        if(_animator == null)
+        {
+            return 0f;
+        }
+
+        foreach(var clip in _animator.runtimeAnimatorController.animationClips)
+        {
+            if(clip.name == clipName)
+            {
+                return clip.length;
+            }
+        }
+
+        return 0f;
     }
 
     private void AddComponent()

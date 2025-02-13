@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using System;
 using Mirror;
+using System.Collections;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -40,18 +41,15 @@ public class UIManager : Singleton<UIManager>
     #region GameUI
     [Header("GameUI")]
     [SerializeField] private GameUI _gameUI;
+    #endregion
 
-    public PlayerCountUI PlayerCountUI
+    #region PlayerCountUI
+    [Header("PlayerCountUI")]
+    [SerializeField] private PlayerCountUI _playerCountUI;
+   
+    public void ConnectionCount(int count)
     {
-        get
-        {
-            if(_gameUI != null)
-            {
-                return _gameUI.PlayerCountUI;
-            }
-
-            return null;
-        }
+        _playerCountUI.PlayerCount(count);
     }
 
     #endregion

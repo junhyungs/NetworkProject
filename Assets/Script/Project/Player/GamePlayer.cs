@@ -1,7 +1,7 @@
 using UnityEngine;
 using Mirror;
 
-public class GamePlayer : Player
+public class GamePlayer : Player, ITakeDamaged
 {
     public PlayerData PlayerData { get; set; }  
 
@@ -79,6 +79,12 @@ public class GamePlayer : Player
 
             item.ReturnItem();
         }
+    }
+
+    [Server]
+    public void TakeDamaged(float damage)
+    {
+        SyncHealth -= damage;
     }
     #endregion
 

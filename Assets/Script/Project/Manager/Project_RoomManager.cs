@@ -104,19 +104,22 @@ public class Project_RoomManager : NetworkRoomManager
         }
 
         UIManager.Instance.DestoryUIManager();
+
+        NetworkUIManager.Instance.DestroyNetworkUIManager();
+
         SceneManager.LoadScene("LoginScene");
     }
 
     public override void OnRoomServerConnect(NetworkConnectionToClient conn)
     {
-        ConnectionCount();
+        //ConnectionCount();
     }
 
     public override void OnRoomServerDisconnect(NetworkConnectionToClient conn)
     {
-        ConnectionCount();
+        //ConnectionCount();
 
-        if(!Utils.IsSceneActive(GameplayScene))
+        if (!Utils.IsSceneActive(GameplayScene))
         {
             return;
         }
@@ -124,17 +127,12 @@ public class Project_RoomManager : NetworkRoomManager
         GameManager.Instance.RemoveLocalPlayer(conn.connectionId);
     }
 
-    private void ConnectionCount()
-    {
-        var connectionCount = NetworkServer.connections.Count;
-        
-        var uiManager = UIManager.Instance;
+    //private void ConnectionCount()
+    //{
+    //    var count = NetworkServer.connections.Count;
 
-        if(uiManager.PlayerCountUI != null)
-        {
-            uiManager.PlayerCountUI._currentPlayerCount = connectionCount;
-        }
-    }
+    //    NetworkUIManager.Instance.SetPlayerConnectionCount(count);
+    //}
 
     /// <summary>
     /// 씬이 전환되면 호출되는 메서드.
@@ -144,7 +142,7 @@ public class Project_RoomManager : NetworkRoomManager
     {
         if (sceneName == "Assets/Scenes/ProjectScene.unity")
         {
-            ConnectionCount();
+            
         }
     }
 

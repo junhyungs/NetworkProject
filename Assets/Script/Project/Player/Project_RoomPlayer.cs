@@ -27,12 +27,18 @@ public class Project_RoomPlayer : NetworkRoomPlayer
         if (isServer)
         {
             SpawnPlayer();
+
+            NetworkUIManager.Instance.SetPlayerConnectionCount();
         }
     }
 
-    #region Client
-  
-    #endregion
+    private void OnDestroy()
+    {
+        if (isServer)
+        {
+            NetworkUIManager.Instance.SetPlayerConnectionCount();
+        }
+    }
 
     #region Server
     [Server]

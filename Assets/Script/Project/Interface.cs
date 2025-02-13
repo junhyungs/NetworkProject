@@ -8,7 +8,7 @@ public interface ITakeDamaged
     public void TakeDamaged(float damage);
 
     [ClientRpc]
-    public void HitEffect();
+    public void HitEffect() { }
 }
 
 public interface IItemReturnEvent
@@ -26,4 +26,7 @@ public interface INode
     }
 
     public State Evaluate();
+    public void OnStateEnter() { }
+    public void OnStateUpdate() { }
+    public void OnStateExit() { }
 }

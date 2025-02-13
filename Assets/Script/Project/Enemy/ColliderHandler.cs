@@ -15,6 +15,12 @@ namespace ColliderHandler
             _index = index;
         }
 
+        public virtual void InitializeHandler(T tComponent, int index)
+        {
+            _tComponent = tComponent;
+            _index = index;
+        }
+
         protected abstract void IsColliding(Collider other, int index);
     }
 }

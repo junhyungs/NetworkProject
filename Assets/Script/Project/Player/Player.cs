@@ -75,7 +75,20 @@ public class Player : NetworkBehaviour
         if (isOwned)
         {
             UIManager.Instance.TriggerUIEvent(UIEvent.Health, value);
+
+            if(_health <= 0)
+            {
+                var identity = GetComponent<NetworkIdentity>();
+
+                CommandGamePlayerDeath(identity);
+            }
         }
+    }
+
+    [Command]
+    private void CommandGamePlayerDeath(NetworkIdentity identity)
+    {
+        GameManager.Instance.SetDeathPlayer(identity);
     }
     public float SyncHealth
     {
@@ -154,6 +167,7 @@ public class Player : NetworkBehaviour
         ReadData();
         SettingAction(true);
     }
+
 
     private void ReadData()
     {

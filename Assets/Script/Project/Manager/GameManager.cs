@@ -10,8 +10,6 @@ public class GameManager : NetworkSingleton<GameManager>
     private List<NetworkIdentity> _deathPlayerList = new List<NetworkIdentity>();
     private List<NetworkIdentity> _localPlayerList;
     private readonly object _lockObject = new object();
-    private bool _isClientReady;
-    public bool IsClientReady => _isClientReady;
 
     private void Start()
     {
@@ -26,28 +24,25 @@ public class GameManager : NetworkSingleton<GameManager>
     {
         var connectionCount = NetworkServer.connections.Count;
 
-        UIManager_OnReadyUI(true);
+        NetworkUIManager_OnReadyUI(true);
 
         yield return new WaitUntil(() =>
         {
-            return connectionCount == _localPlayerDictionary.Count;
+            return connectionCount == _localPlayerDictionary.Count && _spawnSystem.SpawnSystemReady;
         });
 
         LocalPlayerDictionaryToList();
 
         yield return new WaitForSeconds(2f);
 
-        UIManager_OnReadyUI(false);
+        NetworkUIManager_OnReadyUI(false);
 
-        _isClientReady = true;
-
-        _localPlayerList = new List<NetworkIdentity>(_localPlayerDictionary.Values);
+        StartCoroutine(StartWave());
     }
 
-    [ClientRpc]
-    private void UIManager_OnReadyUI(bool isOn)
+    private void NetworkUIManager_OnReadyUI(bool isOn)
     {
-        UIManager.Instance.OnReadyUI(isOn);
+        NetworkUIManager.Instance.OnReadyUI(isOn);
     }
 
     private void LocalPlayerDictionaryToList()
@@ -103,4 +98,42 @@ public class GameManager : NetworkSingleton<GameManager>
             return null;
         }
     }
+
+    #region SpawnSystem
+    [Header("SpawnSystem")]
+    [SerializeField] private SpawnSystem _spawnSystem;
+
+    private IEnumerator StartWave()
+    {
+        while (true)
+        {
+            _spawnSystem.StartSpawnEnemy();
+
+            yield return new WaitUntil(() =>
+            {
+                return _spawnSystem.WaveClear;
+            });
+        }
+    }
+
+    public void SetDeathPlayer(NetworkIdentity identity)
+    {
+        lock(_lockObject)
+        {
+            bool isIdentity = identity != null;
+
+            if (!_deathPlayerList.Contains(identity) && isIdentity)
+            {
+                _deathPlayerList.Add(identity);
+
+                if(_deathPlayerList.Count == _localPlayerList.Count)
+                {
+                    _spawnSystem.StopSpawnEnemy();
+
+                    Debug.Log("게임 종료");
+                }
+            }
+        }
+    }
+    #endregion
 }

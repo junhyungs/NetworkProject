@@ -3,9 +3,9 @@ using ColliderHandler;
 
 public class ZombieColliderHandler : ColliderHandler<ZombieAnimationEvent>
 {
-    public override void InitializeHandler(ZombieAnimationEvent tComponent, float damage, int index)
+    public override void InitializeHandler(ZombieAnimationEvent tComponent, int index)
     {
-        base.InitializeHandler(tComponent, damage, index);
+        base.InitializeHandler(tComponent, index);
     }
 
     protected override void IsColliding(Collider other, int index)
@@ -26,7 +26,7 @@ public class ZombieColliderHandler : ColliderHandler<ZombieAnimationEvent>
 
         if (takeDamaged != null)
         {
-            takeDamaged.TakeDamaged(_damage);
+            takeDamaged.TakeDamaged(_tComponent.Damage);
         }
     }
 
