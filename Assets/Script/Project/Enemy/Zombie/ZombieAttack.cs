@@ -9,18 +9,16 @@ public class ZombieAttack : ActionNode<Zombie>
     {
         _animator = baseReference.GetComponent<Animator>();
         _agent = baseReference.GetComponent<NavMeshAgent>();
-        _animationEvent = baseReference.GetComponent<ZombieAnimationEvent>();
     }
 
     private Animator _animator;
-    private ZombieAnimationEvent _animationEvent;
     private NavMeshAgent _agent;
 
     private readonly int _attack = Animator.StringToHash("Attack");
 
     public override INode.State Evaluate()
     {
-        if (!_animationEvent.CanAttack || _baseReference.IsHit)
+        if ( _baseReference.IsHit)
         {
             return INode.State.Runing;
         }
@@ -58,7 +56,7 @@ public class ZombieAttack : ActionNode<Zombie>
 
         float angle = Vector3.Angle(forward, targetDirection);
 
-        return angle <= 10f;
+        return angle <= 30f;
     }
 
     [ClientRpc]

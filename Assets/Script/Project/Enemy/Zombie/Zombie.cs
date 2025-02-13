@@ -89,20 +89,38 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
 
     private INode SetBehaviorTree()
     {
-        INode node = new SelectorNode(new List<INode>
+        INode node = new SelectorNode<Zombie>(new List<INode>
         {
-            new SelectorNode(new List<INode>
+            new SequenceNode<Zombie>(new List<INode>
             {
-                new ZombieHit(this),
-                new ZombieAttack(this),
-                new ZombieMove(this),
+                new ZombieCanMovement(this),
+
+                new SelectorNode<Zombie>(new List<INode>
+                {
+                    new ZombieHit(this),
+                    new ZombieAttack(this),
+                    new ZombieMove(this)
+                })
             }),
 
             new ZombieCheckTarget(this)
-
         });
 
+        var selectorNode = node as SelectorNode<Zombie>;
+
+        var behaviorNodeList = selectorNode.FindBehaviorNode();
+
+        foreach(var behaviorNode in behaviorNodeList )
+        {
+            RegisterZombieStopInvoke(behaviorNode.StopBehaviorTree);
+        }
+
         return node;
+    }
+
+    public void RegisterZombieStopInvoke(Action<bool> callBack)
+    {
+        _behaviorTreeController += callBack;
     }
 
     public void ZombieStop()

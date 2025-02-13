@@ -14,17 +14,13 @@ public class ZombieHit : ActionNode<Zombie>
 
     public override INode.State Evaluate()
     {
-        if (_baseReference.IsHit)
+        if (!_baseReference.IsHit)
         {
-            _animator.SetTrigger(_hit);
-
-            return INode.State.Runing;
-        }
-        else
-        {
-            _animator.ResetTrigger(_hit);
-
             return INode.State.Fail;
         }
+
+        _animator.SetTrigger(_hit);
+
+        return INode.State.Success;
     }
 }

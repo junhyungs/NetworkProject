@@ -2,10 +2,8 @@ using UnityEngine;
 
 namespace CustomBehaviorTree
 {
-    public abstract class ActionNode<T> : BehaviorNode
+    public abstract class ActionNode<T> : BehaviorNode<T> where T : class
     {
-        protected T _baseReference;
-
         public ActionNode(T baseReference)
         {
             _baseReference = baseReference;

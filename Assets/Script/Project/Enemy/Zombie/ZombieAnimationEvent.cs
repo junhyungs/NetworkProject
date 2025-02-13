@@ -74,6 +74,8 @@ public class ZombieAnimationEvent : MonoBehaviour
             return;
         }
 
+        _attackColliders = new SphereCollider[_targetObjects.Length];
+
         for(int i = 0; i < _targetObjects.Length; i++)
         {
             var targetObject = _targetObjects[i];
@@ -89,7 +91,8 @@ public class ZombieAnimationEvent : MonoBehaviour
         }
     }
 
-    public bool CanAttack { get; set; }
+    public bool CanAttack { get; set; } = true;
+    public bool PlayHitAnimation { get; set; } = false;
 
     public void OnAttack()
     {
@@ -101,8 +104,15 @@ public class ZombieAnimationEvent : MonoBehaviour
         CanAttack = false;
     }
 
+    public void OnHit()
+    {
+        PlayHitAnimation = true;
+    }
+
     public void OffHit()
     {
+        PlayHitAnimation = false;
+
         _zombie.IsHit = false;
     }
 }

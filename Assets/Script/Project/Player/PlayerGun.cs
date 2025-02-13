@@ -70,6 +70,11 @@ public class PlayerGun : NetworkBehaviour
     [Command]
     private void CommandTargetAttack(uint identityId, float damage)
     {
+        if(!NetworkServer.spawned.ContainsKey(identityId))
+        {
+            return;
+        }
+
         NetworkIdentity identity = NetworkServer.spawned[identityId];
 
         ITakeDamaged takeDamaged = identity.GetComponent<ITakeDamaged>();
