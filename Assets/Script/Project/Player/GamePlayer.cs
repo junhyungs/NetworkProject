@@ -27,7 +27,7 @@ public class GamePlayer : Player
 
         myPlayer.Player = this;
 
-        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, myPlayer.SyncNickName);
+        UIManager.Instance.TriggerUIEvent(UIEvent.NickName, myPlayer.SyncNickName);
     }
 
     private void OnTriggerEnter(Collider other)

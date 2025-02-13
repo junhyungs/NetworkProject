@@ -18,6 +18,8 @@ public class GameSettingPanel : MonoBehaviour
 
     public void OnClickExit()
     {
-        GameUIManager.Instance.OnClickExitGame();
+        var roomManager = Project_RoomManager.Instance;
+
+        roomManager.StopGame();
     }
 }

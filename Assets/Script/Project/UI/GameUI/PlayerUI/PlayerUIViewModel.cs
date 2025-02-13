@@ -144,22 +144,22 @@ public class PlayerUIViewModel
 
     public void RegisterChangedEventOnEnable()
     {
-        GameUIManager.Instance.RegisterPlayerUIEvent<float>(UIEvent.Health, SetPlayerHealth);
-        GameUIManager.Instance.RegisterPlayerUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
-        GameUIManager.Instance.RegisterPlayerUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
-        GameUIManager.Instance.RegisterPlayerUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
-        GameUIManager.Instance.RegisterPlayerUIEvent<float>(UIEvent.Speed, SetPlayerSpeed);
-        GameUIManager.Instance.RegisterPlayerUIEvent<float>(UIEvent.Damage, SetPlayerDamage);
+        UIManager.Instance.RegisterUIEvent<float>(UIEvent.Health, SetPlayerHealth);
+        UIManager.Instance.RegisterUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
+        UIManager.Instance.RegisterUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
+        UIManager.Instance.RegisterUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
+        UIManager.Instance.RegisterUIEvent<float>(UIEvent.Speed, SetPlayerSpeed);
+        UIManager.Instance.RegisterUIEvent<float>(UIEvent.Damage, SetPlayerDamage);
     }
 
     public void UnregisterChangedEventOnDisable()
     {
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<float>(UIEvent.Health, SetPlayerHealth);
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<float>(UIEvent.Speed, SetPlayerSpeed);
-        GameUIManager.Instance.UnRegisterPlayerUIEvent<float>(UIEvent.Damage, SetPlayerDamage);
+        UIManager.Instance.UnRegisterUIEvent<float>(UIEvent.Health, SetPlayerHealth);
+        UIManager.Instance.UnRegisterUIEvent<int>(UIEvent.MaxBullet, SetPlayerMaxBullet);
+        UIManager.Instance.UnRegisterUIEvent<int>(UIEvent.CurrentBullet, SetPlayerCurrentBullet);
+        UIManager.Instance.UnRegisterUIEvent<string>(UIEvent.NickName, SetPlayerNickName);
+        UIManager.Instance.UnRegisterUIEvent<float>(UIEvent.Speed, SetPlayerSpeed);
+        UIManager.Instance.UnRegisterUIEvent<float>(UIEvent.Damage, SetPlayerDamage);
     }
 }
 

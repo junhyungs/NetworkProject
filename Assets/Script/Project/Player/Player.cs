@@ -32,7 +32,7 @@ public class Player : NetworkBehaviour
     {
         if (isOwned)
         {
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Damage, value);
+            UIManager.Instance.TriggerUIEvent(UIEvent.Damage, value);
         }
     }
     public float SyncDamage
@@ -53,7 +53,7 @@ public class Player : NetworkBehaviour
     {
         if (isOwned)
         {
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Speed, value);
+            UIManager.Instance.TriggerUIEvent(UIEvent.Speed, value);
         }
     }
     public float SyncMovespeed
@@ -74,7 +74,7 @@ public class Player : NetworkBehaviour
     {
         if (isOwned)
         {
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.Health, value);
+            UIManager.Instance.TriggerUIEvent(UIEvent.Health, value);
         }
     }
     public float SyncHealth
@@ -95,7 +95,7 @@ public class Player : NetworkBehaviour
     {
         if (isOwned)
         {
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.MaxBullet, value);
+            UIManager.Instance.TriggerUIEvent(UIEvent.MaxBullet, value);
         }
     }
     public int SyncMaxBullet
@@ -170,7 +170,7 @@ public class Player : NetworkBehaviour
         CommandInitializePlayerData(health, damage, moveSpeed, maxBullet);
 
         _currentBullet = maxBullet;
-        GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+        UIManager.Instance.TriggerUIEvent(UIEvent.CurrentBullet, _currentBullet);
     }
 
     [Command]
@@ -251,7 +251,7 @@ public class Player : NetworkBehaviour
 
             _currentBullet--;
 
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+            UIManager.Instance.TriggerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
             _gun.Fire();
 
@@ -288,7 +288,7 @@ public class Player : NetworkBehaviour
         {
             _currentBullet = _maxBullet;
 
-            GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.CurrentBullet, _currentBullet);
+            UIManager.Instance.TriggerUIEvent(UIEvent.CurrentBullet, _currentBullet);
 
             CommandReloadAnimation();
         }

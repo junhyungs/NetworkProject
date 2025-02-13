@@ -127,11 +127,11 @@ public class Project_RoomManager : NetworkRoomManager
     {
         var connectionCount = NetworkServer.connections.Count;
         
-        var gameUIManager = GameUIManager.Instance;
+        var uiManager = UIManager.Instance;
 
-        if(gameUIManager.PlayerCountUI != null)
+        if(uiManager.PlayerCountUI != null)
         {
-            gameUIManager.PlayerCountUI._currentPlayerCount = connectionCount;
+            uiManager.PlayerCountUI._currentPlayerCount = connectionCount;
         }
     }
 

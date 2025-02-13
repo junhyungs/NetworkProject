@@ -37,7 +37,7 @@ public class LobbyPlayer : Player
 
                 myPlayer.CommandSetNickName(nickName);
 
-                GameUIManager.Instance.TriggerPlayerUIEvent(UIEvent.NickName, nickName);
+                UIManager.Instance.TriggerUIEvent(UIEvent.NickName, nickName);
 
                 break;
             }
