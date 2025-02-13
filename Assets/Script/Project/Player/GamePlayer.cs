@@ -1,16 +1,28 @@
 using UnityEngine;
 using Mirror;
-using Unity.VisualScripting;
 
 public class GamePlayer : Player
 {
-    public PlayerData PlayerData { get; set; }
+    public PlayerData PlayerData { get; set; }  
 
     protected override void Start()
     {
         base.Start();
 
         ChangePlayer();
+
+        var networkIdentity = GetComponent<NetworkIdentity>();
+
+        if(networkIdentity != null)
+        {
+            CommandRegisterLocalPlayer(networkIdentity);
+        }
+    }
+
+    [Command]
+    private void CommandRegisterLocalPlayer(NetworkIdentity identity)
+    {
+        GameManager.Instance.AddLocalPlayer(connectionToClient.connectionId, identity);
     }
 
     private void ChangePlayer()

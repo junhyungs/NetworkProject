@@ -103,6 +103,7 @@ public class Project_RoomManager : NetworkRoomManager
             singleton.StopServer();
         }
 
+        UIManager.Instance.DestoryUIManager();
         SceneManager.LoadScene("LoginScene");
     }
 

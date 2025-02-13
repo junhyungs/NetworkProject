@@ -22,8 +22,18 @@ public class SpawnSystem : NetworkBehaviour
     {
         if (isServer)
         {
-            StartCoroutine(SpawnItems());
+            StartCoroutine(OnSpawnSystem());
         }
+    }
+
+    private IEnumerator OnSpawnSystem()
+    {
+        yield return new WaitUntil(() =>
+        {
+            return GameManager.Instance.IsClientReady;
+        });
+
+        StartCoroutine(SpawnItems());
     }
 
     #region SpawnItem

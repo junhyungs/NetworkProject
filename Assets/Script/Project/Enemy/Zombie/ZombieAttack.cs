@@ -25,6 +25,11 @@ public class ZombieAttack : ActionNode<Zombie>
             return INode.State.Runing;
         }
 
+        if(_baseReference.Target == null)
+        {
+            return INode.State.Fail;
+        }
+
         bool distance = CarculateDistance();
         bool rotation = CarculateRotation();
 

@@ -1,9 +1,42 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
+using Mirror;
 
 public class UIManager : Singleton<UIManager>
 {
+    private void Awake()
+    {
+        DontDestroyOnLoad(gameObject);
+    }
+
+    public void DestoryUIManager()
+    {
+        _instance = null;
+
+        Destroy(gameObject);
+    }
+
+    #region GameReadyUI
+    [Header("GameReadyUI")]
+    [SerializeField] private GameReadyUI _gameReadyUI;
+    public GameReadyUI GameReadyUI => _gameReadyUI;
+
+    public void OnReadyUI(bool isOn)
+    {
+        if (isOn)
+        {
+            _gameReadyUI.OnReadyUI(isOn);
+        }
+        else
+        {
+            _gameReadyUI.OnReadyUI(isOn);
+
+            _gameUI.PlayerPanel.SetActive(true);
+        }
+    }
+    #endregion
+
     #region GameUI
     [Header("GameUI")]
     [SerializeField] private GameUI _gameUI;
@@ -20,6 +53,7 @@ public class UIManager : Singleton<UIManager>
             return null;
         }
     }
+
     #endregion
 
     #region MVVM
