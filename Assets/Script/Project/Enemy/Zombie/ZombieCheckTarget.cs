@@ -7,11 +7,6 @@ public class ZombieCheckTarget : ActionNode<Zombie>
     
     public override INode.State Evaluate()
     {
-        if(_baseReference.Target != null)
-        {
-            return INode.State.Success;
-        }
-
         var newTarget = GameManager.Instance.GetRandomLocalPlayerTransform();
 
         if(newTarget != null)

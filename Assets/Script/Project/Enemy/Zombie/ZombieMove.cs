@@ -20,41 +20,22 @@ public class ZombieMove : ActionNode<Zombie>
 
     public override INode.State Evaluate()
     {
-        if(_baseReference.Target == null)
-        {
-            return INode.State.Fail;
-        }
+        bool isMove = Vector3.Distance(_baseReference.Target.position,
+            _baseReference.transform.position) > _agent.stoppingDistance;
 
-        if (_baseReference.IsHit)
-        {
-            _agent.SetDestination(_baseReference.transform.position);
-
-            return INode.State.Runing;
-        }
-
-        bool isMove = Vector3.Distance(_baseReference.transform.position,
-            _baseReference.Target.position) > _agent.stoppingDistance;
-
-        if (isMove)
-        {
-            ClientRpc_Movement(isMove);
-
-            return INode.State.Runing;
-        }
+        Vector3 targetPosition = isMove ? _baseReference.Target.position :
+            _baseReference.transform.position;
+        
+        _agent.SetDestination(targetPosition);
 
         ClientRpc_Movement(isMove);
 
-        return INode.State.Success;
+        return INode.State.Runing;
     }
 
     [ClientRpc]
     private void ClientRpc_Movement(bool isMove)
     {
         _animator.SetBool(_moveAnimation, isMove);
-
-        Vector3 targetPosition = isMove ? _baseReference.Target.position :
-            _baseReference.transform.position;
-
-        _agent.SetDestination(targetPosition);
     }
 }

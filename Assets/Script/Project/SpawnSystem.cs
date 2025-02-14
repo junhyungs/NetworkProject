@@ -249,6 +249,10 @@ public class SpawnSystem : NetworkBehaviour
 
             _spawnZombieSet.Add(zombieComponent);
             NetworkServer.Spawn(enemyObject);
+
+            zombieComponent.SettingZombie();
+
+            yield return new WaitForSeconds(1f);
         }
 
         EnemyPowerUp();

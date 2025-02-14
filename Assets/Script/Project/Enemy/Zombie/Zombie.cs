@@ -14,17 +14,19 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
 
     private ParticleSystem _hitParticle;
     private ZombieAnimationEvent _animationEvent;
+    private CapsuleCollider _capsuleCollider;
     private NavMeshAgent _agent;
     private Animator _animator;
 
-    private Action<bool> _behaviorTreeController;
     private Action<Zombie> _returnCallBack;
     
     public Transform Target { get; set; }
-    public bool IsHit { get; set; }
+    public bool IsHit { get; set; } = false;
+    public bool CanAttack { get; set; } = true;
+    public bool HitAnimation { get; set; } = false;
 
+    private bool _isDead;
     private INode _node;
-
     private readonly int _die = Animator.StringToHash("Die");
 
     [SyncVar]
@@ -41,13 +43,14 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
         _animator = GetComponent<Animator>();
         _agent = GetComponent<NavMeshAgent>();
         _animationEvent = GetComponent<ZombieAnimationEvent>();
+        _capsuleCollider = GetComponent<CapsuleCollider>();
 
         InstantiateHitParticle();
     }
 
     private void InstantiateHitParticle()
     {
-        if(_hitParticleObject == null)
+        if (_hitParticleObject == null)
         {
             return;
         }
@@ -58,18 +61,24 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
 
     private void Start()
     {
-        if (isServer)
-        {
-            _node = SetBehaviorTree();
-        }
+        _node = SetBehaviorTree();
     }
 
     private void Update()
     {
-        if(_node != null)
+        if(!_isDead)
         {
             _node.Evaluate();
         }
+    }
+
+    public void SettingZombie()
+    {
+        _isDead = false;
+
+        _agent.isStopped = false;
+
+        ClientRpc_ZombieCollider(true);
     }
 
     public void UnRegisterCallBack(Action<Zombie> callback)
@@ -89,38 +98,22 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
 
     private INode SetBehaviorTree()
     {
-        INode node = new SelectorNode<Zombie>(new List<INode>
+        INode node = new SelectorNode<Zombie>(new List<INode>()
         {
-            new SequenceNode<Zombie>(new List<INode>
-            {
-                new ZombieCanMovement(this),
+            new ZombieIsTarget(this),
 
-                new SelectorNode<Zombie>(new List<INode>
-                {
-                    new ZombieHit(this),
-                    new ZombieAttack(this),
-                    new ZombieMove(this)
-                })
+            new ZombieHit(this),
+
+            new SequenceNode<Zombie>(new List<INode>()
+            {
+                new ZombieCanAttack(this),
+                new ZombieAttack(this)
             }),
 
-            new ZombieCheckTarget(this)
+             new ZombieMove(this)
         });
 
-        var selectorNode = node as SelectorNode<Zombie>;
-
-        var behaviorNodeList = selectorNode.FindBehaviorNode();
-
-        foreach(var behaviorNode in behaviorNodeList )
-        {
-            RegisterZombieStopInvoke(behaviorNode.StopBehaviorTree);
-        }
-
         return node;
-    }
-
-    public void RegisterZombieStopInvoke(Action<bool> callBack)
-    {
-        _behaviorTreeController += callBack;
     }
 
     public void ZombieStop()
@@ -159,23 +152,33 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
 
         if(_health <= 0)
         {
+            _isDead = true;
+
+            Death();
+
             _returnCallBack?.Invoke(this);
-
-            _behaviorTreeController.Invoke(true);
-
-            var dieLength = _animationEvent.DieAnimationLength;
-
-            StartCoroutine(ReturnZombie(dieLength));
-
-            ClientRPC_DieAnimation();
         }
     }
+
+    private void Death()
+    {
+        _agent.SetDestination(transform.position);
+        _agent.isStopped = true;
+
+        ClientRpc_ZombieCollider(false);
+        ClientRPC_DieAnimation();
+
+        var dieLength = _animationEvent.DieAnimationLength;
+
+        StartCoroutine(ReturnZombie(dieLength));
+    }
+
 
     private IEnumerator ReturnZombie(float length)
     {
         yield return new WaitForSeconds(length);
 
-        NetworkServer.UnSpawn(gameObject);
+        NetworkServer.UnSpawn(gameObject);        
 
         ObjectPool.Instance.EnqueuePool(gameObject);
     }
@@ -183,6 +186,12 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
     [ClientRpc]
     private void ClientRPC_DieAnimation()
     {
-        _animator.SetTrigger(_die);
+        _animator.Play("Die");
+    }
+
+    [ClientRpc]
+    private void ClientRpc_ZombieCollider(bool enabled)
+    {
+        _capsuleCollider.enabled = enabled;
     }
 }

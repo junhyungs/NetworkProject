@@ -90,30 +90,5 @@ public class ZombieAnimationEvent : MonoBehaviour
             handler.InitializeHandler(this, _zombie.Damage, 1);
         }
     }
-
-    public bool CanAttack { get; set; } = true;
-    public bool PlayHitAnimation { get; set; } = false;
-
-    public void OnAttack()
-    {
-        CanAttack = true;
-    }
-
-    public void OffAttack()
-    {
-        CanAttack = false;
-    }
-
-    public void OnHit()
-    {
-        PlayHitAnimation = true;
-    }
-
-    public void OffHit()
-    {
-        PlayHitAnimation = false;
-
-        _zombie.IsHit = false;
-    }
 }
 

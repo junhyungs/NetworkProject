@@ -13,4 +13,4 @@ MonoBehaviour:
   m_Name: MoveSpeedUpItemData
   m_EditorClassIdentifier: 
   ItemName: 1
-  _moveSpeed: 2
+  _moveSpeed: 0.5
