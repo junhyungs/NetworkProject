@@ -120,6 +120,12 @@ public class GamePlayer : Player, ITakeDamaged
             LayerMask.NameToLayer("Player");
     }
 
+    [ClientRpc]
+    public void ClientRpc_RespawnPlayer()
+    {
+        GamePlayerControl(true);
+    }
+
 
     public void GamePlayerControl(bool enabled)
     {
@@ -129,7 +135,7 @@ public class GamePlayer : Player, ITakeDamaged
 
         var gameUI = UIManager.Instance.GameUI;
 
-        gameUI.DeathUI();
+        gameUI.DeathUI.SetActive(!enabled);
     }
     
 }

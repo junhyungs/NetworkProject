@@ -16,12 +16,7 @@ public class GameUI : MonoBehaviour
     [Header("PlayerDeathUI")]
     [SerializeField] private GameObject _deathUI;
     [SerializeField] private Button _regameButton;
-    public void DeathUI()
-    {
-        bool isActive = _deathUI.activeSelf ? false : true;
-
-        _deathUI.SetActive(isActive);
-    }
+    public GameObject DeathUI => _deathUI;
     
     /// <summary>
     /// Server

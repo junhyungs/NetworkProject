@@ -30,6 +30,8 @@ public class ZombieAnimationEvent : MonoBehaviour
         }
     }
 
+    public Zombie Zombie => _zombie;
+
     public float DieAnimationLength { get; set; }
     
     private void Awake()

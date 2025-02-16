@@ -8,7 +8,7 @@ public class GameManager : NetworkSingleton<GameManager>
 {
     private Dictionary<int, NetworkIdentity> _localPlayerDictionary = new Dictionary<int, NetworkIdentity>(); 
     private List<NetworkIdentity> _deathPlayerList = new List<NetworkIdentity>();
-    private List<NetworkIdentity> _localPlayerList;
+    private List<NetworkIdentity> _alivePlayerList;
     private readonly object _lockObject = new object();
     private bool _isGameOver;
 
@@ -48,7 +48,7 @@ public class GameManager : NetworkSingleton<GameManager>
 
     private void LocalPlayerDictionaryToList()
     {
-        _localPlayerList = new List<NetworkIdentity>(_localPlayerDictionary.Values);
+        _alivePlayerList = new List<NetworkIdentity>(_localPlayerDictionary.Values);
     }
 
     [Server]
@@ -70,7 +70,7 @@ public class GameManager : NetworkSingleton<GameManager>
         {
             if (_localPlayerDictionary.TryGetValue(connectionId, out NetworkIdentity identity))
             {
-                _localPlayerList.Remove(identity);
+                _alivePlayerList.Remove(identity);
 
                 _localPlayerDictionary.Remove(connectionId);
             }
@@ -82,14 +82,14 @@ public class GameManager : NetworkSingleton<GameManager>
     {
         lock (_lockObject)
         {
-            if(_localPlayerList.Count == 0)
+            if(_alivePlayerList.Count == 0)
             {
                 return null;
             }
 
-            int randomIndex = UnityEngine.Random.Range(0, _localPlayerList.Count);
+            int randomIndex = UnityEngine.Random.Range(0, _alivePlayerList.Count);
 
-            var networkIdentity = _localPlayerList[randomIndex];
+            var networkIdentity = _alivePlayerList[randomIndex];
 
             if(networkIdentity != null && networkIdentity.TryGetComponent(out Transform transform))
             {
@@ -138,21 +138,25 @@ public class GameManager : NetworkSingleton<GameManager>
     {
         var randomTransform = FindFirstObjectByType<PlayerSpawnPosition>();
 
-        foreach(var player in _deathPlayerList)
+        foreach(var networkIdentity in _deathPlayerList)
         {
-            GamePlayer gamePlayer = player.GetComponent<GamePlayer>();
+            GamePlayer gamePlayer = networkIdentity.GetComponent<GamePlayer>();
 
             if(randomTransform != null)
             {
                 var transform = randomTransform.GetSpawnTransform();
 
-                player.transform.position = transform.position;
+                networkIdentity.transform.position = transform.position;
             }
 
-            gamePlayer.GamePlayerControl(true);
+            gamePlayer.ClientRpc_RespawnPlayer();
             gamePlayer.SyncHealth = 100f;
             gamePlayer.TargetRpc_SetDeathLayer(false);
-            gamePlayer.gameObject.SetActive(true);
+
+            if (!_alivePlayerList.Contains(networkIdentity))
+            {
+                _alivePlayerList.Add(networkIdentity);   
+            }
         }
 
         _deathPlayerList.Clear();
@@ -169,7 +173,9 @@ public class GameManager : NetworkSingleton<GameManager>
             {
                 _deathPlayerList.Add(identity);
 
-                if(_deathPlayerList.Count == _localPlayerList.Count)
+                _alivePlayerList.Remove(identity);
+
+                if(_deathPlayerList.Count == _localPlayerDictionary.Count)
                 {
                     _spawnSystem.StopSpawnEnemy();
 
