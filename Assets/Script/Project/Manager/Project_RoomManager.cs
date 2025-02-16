@@ -105,8 +105,6 @@ public class Project_RoomManager : NetworkRoomManager
 
         UIManager.Instance.DestoryUIManager();
 
-        NetworkUIManager.Instance.DestroyNetworkUIManager();
-
         SceneManager.LoadScene("LoginScene");
     }
 

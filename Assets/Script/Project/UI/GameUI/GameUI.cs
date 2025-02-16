@@ -22,12 +22,21 @@ public class GameUI : MonoBehaviour
 
         _deathUI.SetActive(isActive);
     }
-
-    public void OnRegameButton(bool isServer)
+    
+    /// <summary>
+    /// Server
+    /// </summary>
+    public void OnRegameButton()
     {
-        if (isServer)
-        {
-            _regameButton.gameObject.SetActive(true);
-        }
+        Cursor.lockState = CursorLockMode.None;
+
+        _regameButton.gameObject.SetActive(true);        
+    }
+
+    public void OnClickRegame()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+
+        GameManager.Instance.ReGame();
     }
 }

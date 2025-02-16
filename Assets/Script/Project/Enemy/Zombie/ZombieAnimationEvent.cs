@@ -83,11 +83,20 @@ public class ZombieAnimationEvent : MonoBehaviour
             SphereCollider sphereCollider = targetObject.AddComponent<SphereCollider>();
             sphereCollider.enabled = true;
             sphereCollider.isTrigger = true;
+            sphereCollider.radius = 0.3f;
 
             _attackColliders[i] = sphereCollider;
 
             ZombieColliderHandler handler = targetObject.AddComponent<ZombieColliderHandler>();
             handler.InitializeHandler(this, _zombie.Damage, 1);
+        }
+    }
+
+    public void ResetHashSet()
+    {
+        if(_overlapSet.Count >= 1f)
+        {
+            _overlapSet.Clear();
         }
     }
 }

@@ -38,4 +38,13 @@ public class GameSettingUI : MonoBehaviour
             _settingPanel.SetActive(true);
         }
     }
+
+    public void OnClickExit()
+    {
+#if UNITY_EDITOR
+        UnityEditor.EditorApplication.isPlaying = false;
+#else
+        Application.Quit();
+#endif
+    }
 }

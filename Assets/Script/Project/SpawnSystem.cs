@@ -186,6 +186,11 @@ public class SpawnSystem : NetworkBehaviour
 
         _enemyReady = true;
 
+        InitializeZombieAbility();
+    }
+
+    private void InitializeZombieAbility()
+    {
         _currentZombieHealth = _data.Health;
         _currentZombiePower = _data.Damage;
         _currentZombieSpeed = _data.MoveSpeed;
@@ -196,6 +201,13 @@ public class SpawnSystem : NetworkBehaviour
         WaveClear = false;
 
         _spawnCoroutine = StartCoroutine(SpawnEnemy());
+    }
+
+    public void ReGameSpawnSystem()
+    {
+        _currentLevel = 1;
+
+        InitializeZombieAbility();
     }
 
     public void StopSpawnEnemy()
@@ -335,7 +347,7 @@ public class SpawnSystem : NetworkBehaviour
     {
         float startAlpha = color.a;
         float elapsed = 0f;
-        float duractionTime = 6f;
+        float duractionTime = 3f;
 
         while (elapsed < duractionTime)
         {

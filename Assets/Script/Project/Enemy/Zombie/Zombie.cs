@@ -28,6 +28,8 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
     private bool _isDead;
     private INode _node;
     private readonly int _die = Animator.StringToHash("Die");
+    private readonly int _hit = Animator.StringToHash("Hit");
+    private readonly int _attack = Animator.StringToHash("Attack");
 
     [SyncVar]
     private float _health;
@@ -46,6 +48,12 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
         _capsuleCollider = GetComponent<CapsuleCollider>();
 
         InstantiateHitParticle();
+    }
+
+    private void OnEnable()
+    {
+        _animator.Rebind();
+        _animator.Update(0f);
     }
 
     private void InstantiateHitParticle()
@@ -193,5 +201,20 @@ public class Zombie : NetworkBehaviour, ITakeDamaged
     private void ClientRpc_ZombieCollider(bool enabled)
     {
         _capsuleCollider.enabled = enabled;
+    }
+
+    //애니메이션 트리거는 NetworkAnimator가 자동으로 동기화 하지 않는다.
+    //따라서 Rpc로 동기화해줘야함.
+
+    [ClientRpc]
+    public void ClientRpc_HitAnimation()
+    {
+        _animator.Play(_hit);
+    }
+
+    [ClientRpc]
+    public void ClientRpc_AttackAnimation()
+    {
+        _animator.SetTrigger(_attack);
     }
 }

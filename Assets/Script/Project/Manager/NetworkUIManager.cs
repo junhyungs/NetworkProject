@@ -17,19 +17,12 @@ public class NetworkUIManager : NetworkBehaviour
         }
     }
 
-    private void Awake()
+    private void OnDestroy()
     {
-        if (isServer)
+        if (_instance != null)
         {
-            DontDestroyOnLoad(gameObject);
+            _instance = null;
         }
-    }
-
-    public void DestroyNetworkUIManager()
-    {
-        _instance = null;
-
-        Destroy(gameObject);
     }
 
     public void OnReadyUI(bool isOn)

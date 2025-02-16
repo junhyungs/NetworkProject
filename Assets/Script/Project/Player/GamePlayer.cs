@@ -1,11 +1,9 @@
 using UnityEngine;
-
 using Mirror;
+using System.Collections;
 
 public class GamePlayer : Player, ITakeDamaged
 {
-    public PlayerData PlayerData { get; set; }
-
     protected override void Start()
     {
         base.Start();
@@ -102,22 +100,36 @@ public class GamePlayer : Player, ITakeDamaged
         }
     }
 
+   
     [Command]
     private void Command_SetDeathPlayer()
     {
+        gameObject.layer = LayerMask.NameToLayer("DeathPlayer");
+
+        TargetRpc_SetDeathLayer(true);
+
         NetworkIdentity identity = GetComponent<NetworkIdentity>();
 
         GameManager.Instance.SetDeathPlayer(identity);
     }
 
-    public void GamePlayerControl(bool death)
+    [TargetRpc]
+    public void TargetRpc_SetDeathLayer(bool isDeath)
     {
-        _animator.SetBool(_animationDie, !death);
+        gameObject.layer = isDeath ? LayerMask.NameToLayer("DeathPlayer") :
+            LayerMask.NameToLayer("Player");
+    }
 
-        _playerInput.enabled = death;
+
+    public void GamePlayerControl(bool enabled)
+    {
+        _animator.SetBool(_animationDie, !enabled);
+
+        _playerInput.enabled = enabled;
 
         var gameUI = UIManager.Instance.GameUI;
 
         gameUI.DeathUI();
     }
+    
 }

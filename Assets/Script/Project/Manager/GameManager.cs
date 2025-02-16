@@ -104,6 +104,17 @@ public class GameManager : NetworkSingleton<GameManager>
     [Header("SpawnSystem")]
     [SerializeField] private SpawnSystem _spawnSystem;
 
+    public void ReGame()
+    {
+        _isGameOver = false;
+
+        RespawnPlayer();
+
+        _spawnSystem.ReGameSpawnSystem();
+
+        StartCoroutine(StartWave());
+    }
+
     private IEnumerator StartWave()
     {
         while (!_isGameOver)
@@ -140,7 +151,11 @@ public class GameManager : NetworkSingleton<GameManager>
 
             gamePlayer.GamePlayerControl(true);
             gamePlayer.SyncHealth = 100f;
+            gamePlayer.TargetRpc_SetDeathLayer(false);
+            gamePlayer.gameObject.SetActive(true);
         }
+
+        _deathPlayerList.Clear();
     }
 
     [Server]
@@ -160,7 +175,7 @@ public class GameManager : NetworkSingleton<GameManager>
 
                     _isGameOver = true;
 
-                    UIManager.Instance.GameUI.OnRegameButton(isServer);
+                    UIManager.Instance.GameUI.OnRegameButton();
 
                     Debug.Log("게임 종료");
                 }

@@ -32,6 +32,9 @@ public class ZombieColliderHandler : ColliderHandler<ZombieAnimationEvent>
 
     private void OnTriggerEnter(Collider other)
     {
-        IsColliding(other, _index);
+        if(other.gameObject.layer == LayerMask.NameToLayer("Player"))
+        {
+            IsColliding(other, _index);
+        }
     }
 }
