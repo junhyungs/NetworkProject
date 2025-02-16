@@ -1547,6 +1547,7 @@ GameObject:
   - component: {fileID: 6617229233664963778}
   - component: {fileID: 6948781616245743728}
   - component: {fileID: 2397883857682732647}
+  - component: {fileID: -6208912989391742149}
   m_Layer: 6
   m_Name: SM_Chr_Zombie_Female_01
   m_TagString: Untagged
@@ -1701,7 +1702,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a553cb17010b2403e8523b558bffbc14, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  syncDirection: 1
+  syncDirection: 0
   syncMode: 0
   syncInterval: 0
   target: {fileID: 2267508042616598716}
@@ -1722,6 +1723,23 @@ MonoBehaviour:
   positionSensitivity: 0.01
   rotationSensitivity: 0.01
   scaleSensitivity: 0.01
+--- !u!114 &-6208912989391742149
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6495126990502017303}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7f6f3bf89aa97405989c802ba270f815, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  syncDirection: 0
+  syncMode: 0
+  syncInterval: 0
+  clientAuthority: 0
+  animator: {fileID: 8987009077740319785}
 --- !u!1 &6636066188710415428
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,5 +1,6 @@
 using UnityEngine;
 using Mirror;
+using UnityEngine.InputSystem;
 
 public class Player : NetworkBehaviour
 {
@@ -10,6 +11,7 @@ public class Player : NetworkBehaviour
     protected PlayerCamera _playerCamera;
     protected PlayerGun _gun;
     protected Rigidbody _rigidbody;
+    protected PlayerInput _playerInput;
     protected Animator _animator;
     protected Camera _camera;
 
@@ -24,6 +26,7 @@ public class Player : NetworkBehaviour
     protected readonly int _animationReload = Animator.StringToHash("Reloading");
     protected readonly int _animationWalk = Animator.StringToHash("Walk");
     protected readonly int _animationRun = Animator.StringToHash("Run");
+    protected readonly int _animationDie = Animator.StringToHash("Die");
 
     #region SyncProperty
     [SyncVar(hook = nameof(Hook_Damage))]
@@ -75,21 +78,9 @@ public class Player : NetworkBehaviour
         if (isOwned)
         {
             UIManager.Instance.TriggerUIEvent(UIEvent.Health, value);
-
-            if(_health <= 0)
-            {
-                var identity = GetComponent<NetworkIdentity>();
-
-                CommandGamePlayerDeath(identity);
-            }
         }
     }
 
-    [Command]
-    private void CommandGamePlayerDeath(NetworkIdentity identity)
-    {
-        GameManager.Instance.SetDeathPlayer(identity);
-    }
     public float SyncHealth
     {
         get => _health;
@@ -142,6 +133,7 @@ public class Player : NetworkBehaviour
 
     private void InitializeOnAwakePlayer()
     {
+        _playerInput = GetComponent<PlayerInput>();
         _rigidbody = GetComponent<Rigidbody>();
         _inputSystem = GetComponent<PlayerInputSystem>();
         _animator = GetComponent<Animator>();

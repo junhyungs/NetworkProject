@@ -1,8 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
 using System;
-using Mirror;
-using System.Collections;
 
 public class UIManager : Singleton<UIManager>
 {
@@ -41,6 +39,7 @@ public class UIManager : Singleton<UIManager>
     #region GameUI
     [Header("GameUI")]
     [SerializeField] private GameUI _gameUI;
+    public GameUI GameUI => _gameUI;
     #endregion
 
     #region PlayerCountUI

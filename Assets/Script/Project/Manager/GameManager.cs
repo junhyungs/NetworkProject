@@ -10,6 +10,7 @@ public class GameManager : NetworkSingleton<GameManager>
     private List<NetworkIdentity> _deathPlayerList = new List<NetworkIdentity>();
     private List<NetworkIdentity> _localPlayerList;
     private readonly object _lockObject = new object();
+    private bool _isGameOver;
 
     private void Start()
     {
@@ -105,7 +106,7 @@ public class GameManager : NetworkSingleton<GameManager>
 
     private IEnumerator StartWave()
     {
-        while (true)
+        while (!_isGameOver)
         {
             _spawnSystem.StartSpawnEnemy();
 
@@ -113,9 +114,36 @@ public class GameManager : NetworkSingleton<GameManager>
             {
                 return _spawnSystem.WaveClear;
             });
+
+            if (!_isGameOver)
+            {
+                RespawnPlayer();
+            }
         }
     }
 
+    [Server]
+    public void RespawnPlayer()
+    {
+        var randomTransform = FindFirstObjectByType<PlayerSpawnPosition>();
+
+        foreach(var player in _deathPlayerList)
+        {
+            GamePlayer gamePlayer = player.GetComponent<GamePlayer>();
+
+            if(randomTransform != null)
+            {
+                var transform = randomTransform.GetSpawnTransform();
+
+                player.transform.position = transform.position;
+            }
+
+            gamePlayer.GamePlayerControl(true);
+            gamePlayer.SyncHealth = 100f;
+        }
+    }
+
+    [Server]
     public void SetDeathPlayer(NetworkIdentity identity)
     {
         lock(_lockObject)
@@ -129,6 +157,10 @@ public class GameManager : NetworkSingleton<GameManager>
                 if(_deathPlayerList.Count == _localPlayerList.Count)
                 {
                     _spawnSystem.StopSpawnEnemy();
+
+                    _isGameOver = true;
+
+                    UIManager.Instance.GameUI.OnRegameButton(isServer);
 
                     Debug.Log("게임 종료");
                 }

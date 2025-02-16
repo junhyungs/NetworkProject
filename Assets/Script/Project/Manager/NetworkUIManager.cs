@@ -19,7 +19,10 @@ public class NetworkUIManager : NetworkBehaviour
 
     private void Awake()
     {
-        DontDestroyOnLoad(gameObject);
+        if (isServer)
+        {
+            DontDestroyOnLoad(gameObject);
+        }
     }
 
     public void DestroyNetworkUIManager()

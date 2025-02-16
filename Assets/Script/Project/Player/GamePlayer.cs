@@ -1,9 +1,10 @@
 using UnityEngine;
+
 using Mirror;
 
 public class GamePlayer : Player, ITakeDamaged
 {
-    public PlayerData PlayerData { get; set; }  
+    public PlayerData PlayerData { get; set; }
 
     protected override void Start()
     {
@@ -11,11 +12,14 @@ public class GamePlayer : Player, ITakeDamaged
 
         ChangePlayer();
 
-        var networkIdentity = GetComponent<NetworkIdentity>();
-
-        if(networkIdentity != null)
+        if (isOwned)
         {
-            CommandRegisterLocalPlayer(networkIdentity);
+            var networkIdentity = GetComponent<NetworkIdentity>();
+
+            if (networkIdentity != null)
+            {
+                CommandRegisterLocalPlayer(networkIdentity);
+            }
         }
     }
 
@@ -60,11 +64,6 @@ public class GamePlayer : Player, ITakeDamaged
         }
     }
 
-    #region Server
-  
-    #endregion
-
-    #region Command
     [Command]
     private void CommandPickUpItem(NetworkIdentity itemIdentity)
     {
@@ -85,10 +84,40 @@ public class GamePlayer : Player, ITakeDamaged
     public void TakeDamaged(float damage)
     {
         SyncHealth -= damage;
+
+        if(SyncHealth <= 0)
+        {
+            ClientRpc_PlayerDeath();
+        }
     }
-    #endregion
 
-    #region ClientRPC
+    [ClientRpc]
+    private void ClientRpc_PlayerDeath()
+    {
+        if (isOwned)
+        {
+            Command_SetDeathPlayer();
 
-    #endregion
+            GamePlayerControl(false);
+        }
+    }
+
+    [Command]
+    private void Command_SetDeathPlayer()
+    {
+        NetworkIdentity identity = GetComponent<NetworkIdentity>();
+
+        GameManager.Instance.SetDeathPlayer(identity);
+    }
+
+    public void GamePlayerControl(bool death)
+    {
+        _animator.SetBool(_animationDie, !death);
+
+        _playerInput.enabled = death;
+
+        var gameUI = UIManager.Instance.GameUI;
+
+        gameUI.DeathUI();
+    }
 }

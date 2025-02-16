@@ -28,7 +28,8 @@ public class ZombieMove : ActionNode<Zombie>
         
         _agent.SetDestination(targetPosition);
 
-        ClientRpc_Movement(isMove);
+        _animator.SetBool(_moveAnimation, isMove);
+        //ClientRpc_Movement(isMove);
 
         return INode.State.Runing;
     }

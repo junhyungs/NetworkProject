@@ -4,6 +4,7 @@ using Mirror;
 using System.Collections.Generic;
 using UnityEngine.AI;
 using UnityEngine.UI;
+using System.Linq;
 
 public class SpawnSystem : NetworkBehaviour
 {
@@ -206,7 +207,9 @@ public class SpawnSystem : NetworkBehaviour
             _spawnCoroutine = null;
         }
 
-        foreach(var enemy in _spawnZombieSet)
+        var spawnZombieSetToList = _spawnZombieSet.ToList();
+
+        foreach(var enemy in spawnZombieSetToList)
         {
             if (enemy.gameObject.activeSelf)
             {

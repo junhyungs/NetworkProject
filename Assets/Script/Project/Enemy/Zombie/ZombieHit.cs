@@ -25,7 +25,10 @@ public class ZombieHit : ActionNode<Zombie>
         {
             _agent.SetDestination(_baseReference.transform.position);
 
-            ClientRpc_HitAnimation();
+            _animator.ResetTrigger("Attack");
+
+            _animator.SetTrigger(_hit);
+            //ClientRpc_HitAnimation();
 
             return INode.State.Runing;
         }
