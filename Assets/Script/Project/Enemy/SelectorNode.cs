@@ -10,30 +10,6 @@ namespace CustomBehaviorTree
             _childNodeList = childNodeList;
         }
 
-        public List<BehaviorNode<T>> FindBehaviorNode()
-        {
-            var findList = new List<BehaviorNode<T>>();
-
-            foreach (var node in _childNodeList)
-            {
-                if (node is BehaviorNode<T> behaviorNode)
-                {
-                    findList.Add(behaviorNode);
-
-                    if (behaviorNode is SequenceNode<T> sequenceNode)
-                    {
-                        findList.AddRange(sequenceNode.FindBehaviorNode());
-                    }
-                    else if (behaviorNode is SelectorNode<T> selectorNode)
-                    {
-                        findList.AddRange(selectorNode.FindBehaviorNode());
-                    }
-                }
-            }
-
-            return findList;
-        }
-
         public TNode FindNode<TNode>() where TNode : class, INode
         {
             foreach (var node in _childNodeList)

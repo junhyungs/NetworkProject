@@ -151,7 +151,7 @@ public class GameManager : NetworkSingleton<GameManager>
 
             gamePlayer.ClientRpc_RespawnPlayer();
             gamePlayer.SyncHealth = 100f;
-            gamePlayer.TargetRpc_SetDeathLayer(false);
+            gamePlayer.gameObject.layer = LayerMask.NameToLayer("Player");
 
             if (!_alivePlayerList.Contains(networkIdentity))
             {

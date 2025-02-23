@@ -62,13 +62,13 @@ public class PlayerGun : NetworkBehaviour
 
             if(identity != null)
             {
-                CommandTargetAttack(identity.netId, 10f);
+                CommandAttack(identity.netId, 10f);
             }
         }
     }
 
     [Command]
-    private void CommandTargetAttack(uint identityId, float damage)
+    private void CommandAttack(uint identityId, float damage)
     {
         if(!NetworkServer.spawned.ContainsKey(identityId))
         {

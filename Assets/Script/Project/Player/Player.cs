@@ -7,13 +7,38 @@ public class Player : NetworkBehaviour
     [Header("Data")]
     [SerializeField] private PlayerData _playerData;
 
-    protected PlayerInputSystem _inputSystem;
-    protected PlayerCamera _playerCamera;
-    protected PlayerGun _gun;
-    protected Rigidbody _rigidbody;
+    private PlayerInputSystem _inputSystem;
+    private PlayerCamera _playerCamera;
+    private PlayerGun _gun;
+    private Rigidbody _rigidbody;
+    private Camera _camera;
     protected PlayerInput _playerInput;
     protected Animator _animator;
-    protected Camera _camera;
+
+    private readonly int _animationMovement = Animator.StringToHash("SpeedValue");
+    private readonly int _animationFire = Animator.StringToHash("Fire");
+    private readonly int _animationReload = Animator.StringToHash("Reloading");
+    private readonly int _animationWalk = Animator.StringToHash("Walk");
+    private readonly int _animationRun = Animator.StringToHash("Run");
+    protected readonly int _animationDie = Animator.StringToHash("Die");
+
+    private int _currentBullet = 20;
+    private float _targetSpeed;
+    private float _speed;
+    private float _targetRotation;
+    private float _rotationVelocity;
+    private float _currentZoomRotation;
+    private float _zoomRotationVelocity;
+    private bool _isZoomMode;
+
+    [SyncVar(hook = nameof(Hook_Damage))]
+    private float _damage;
+    [SyncVar(hook = nameof(Hook_Speed))]
+    private float _currentMoveSpeed;
+    [SyncVar(hook = nameof(HooK_Health))]
+    private float _health;
+    [SyncVar(hook = nameof(Hook_MaxBullet))]
+    private int _maxBullet;
 
     public PlayerGun Gun
     {
@@ -21,23 +46,6 @@ public class Player : NetworkBehaviour
         set => _gun = value;
     }
 
-    protected readonly int _animationMovement = Animator.StringToHash("SpeedValue");
-    protected readonly int _animationFire = Animator.StringToHash("Fire");
-    protected readonly int _animationReload = Animator.StringToHash("Reloading");
-    protected readonly int _animationWalk = Animator.StringToHash("Walk");
-    protected readonly int _animationRun = Animator.StringToHash("Run");
-    protected readonly int _animationDie = Animator.StringToHash("Die");
-
-    #region SyncProperty
-    [SyncVar(hook = nameof(Hook_Damage))]
-    private float _damage;
-    private void Hook_Damage(float _, float value)
-    {
-        if (isOwned)
-        {
-            UIManager.Instance.TriggerUIEvent(UIEvent.Damage, value);
-        }
-    }
     public float SyncDamage
     {
         get => _damage;
@@ -50,15 +58,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [SyncVar(hook = nameof(Hook_Speed))]
-    private float _currentMoveSpeed;
-    private void Hook_Speed(float _, float value)
-    {
-        if (isOwned)
-        {
-            UIManager.Instance.TriggerUIEvent(UIEvent.Speed, value);
-        }
-    }
     public float SyncMovespeed
     {
         get => _currentMoveSpeed;
@@ -71,16 +70,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [SyncVar(hook = nameof(HooK_Health))]
-    private float _health;
-    private void HooK_Health(float _, float value)
-    {
-        if (isOwned)
-        {
-            UIManager.Instance.TriggerUIEvent(UIEvent.Health, value);
-        }
-    }
-
     public float SyncHealth
     {
         get => _health;
@@ -89,19 +78,12 @@ public class Player : NetworkBehaviour
             if (isServer)
             {
                 _health = value;
+
+                NetworkUIManager.Instance.UpdatePartyUI(netId, _health);
             }
         }
     }
 
-    [SyncVar(hook = nameof(Hook_MaxBullet))]
-    private int _maxBullet;
-    private void Hook_MaxBullet(int _, int value)
-    {
-        if (isOwned)
-        {
-            UIManager.Instance.TriggerUIEvent(UIEvent.MaxBullet, value);
-        }
-    }
     public int SyncMaxBullet
     {
         get => _maxBullet;
@@ -113,18 +95,43 @@ public class Player : NetworkBehaviour
             }
         }
     }
+    
+    private void Hook_Damage(float _, float value)
+    {
+        if (isOwned)
+        {
+            UIManager.Instance.TriggerUIEvent(UIEvent.Damage, value);
+        }
+    }
+      
+    private void Hook_Speed(float _, float value)
+    {
+        if (isOwned)
+        {
+            UIManager.Instance.TriggerUIEvent(UIEvent.Speed, value);
+        }
+    }
+   
+    private void HooK_Health(float _, float value)
+    {
+        if (isOwned)
+        {
+            UIManager.Instance.TriggerUIEvent(UIEvent.Health, value);
+        }
+    }
 
-    #endregion
-    private int _currentBullet = 20;
+    private void Hook_MaxBullet(int _, int value)
+    {
+        if (isOwned)
+        {
+            UIManager.Instance.TriggerUIEvent(UIEvent.MaxBullet, value);
+        }
+    }    
 
-    private float _targetSpeed;
-    private float _speed;
-    private float _targetRotation;
-    private float _rotationVelocity;
-    private float _currentZoomRotation;
-    private float _zoomRotationVelocity;
+    public override void OnStopServer()
+    {
 
-    private bool _isZoomMode;
+    }
 
     private void Awake()
     {
@@ -160,7 +167,6 @@ public class Player : NetworkBehaviour
         SettingAction(true);
     }
 
-
     private void ReadData()
     {
         if (_playerData == null || !isOwned)
@@ -179,14 +185,6 @@ public class Player : NetworkBehaviour
         UIManager.Instance.TriggerUIEvent(UIEvent.CurrentBullet, _currentBullet);
     }
 
-    [Command]
-    private void CommandInitializePlayerData(float health, float damage, float moveSpeed, int maxBullet)
-    {
-        SyncHealth = health;
-        SyncMaxBullet = maxBullet;
-        SyncDamage = damage;
-        SyncMovespeed = moveSpeed;
-    }
 
     private void SettingAction(bool isEnable)
     {
@@ -235,11 +233,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Command]
-    private void CommandSetSprintSpeed(float speedValue)
-    {
-        _currentMoveSpeed += speedValue;
-    }
 
     private void Attack(bool isAttack)
     {
@@ -300,18 +293,6 @@ public class Player : NetworkBehaviour
         }
     }
 
-    [Command]
-    private void CommandReloadAnimation()
-    {
-        ClientRPCReloadAnimation();
-    }
-
-    [ClientRpc]
-    private void ClientRPCReloadAnimation()
-    {
-        _animator.SetTrigger(_animationReload);
-    }
-
     private void Movement()
     {
         _targetSpeed = _currentMoveSpeed;
@@ -356,7 +337,6 @@ public class Player : NetworkBehaviour
         _rigidbody.linearVelocity = moveVleocity;
 
         AnimationMovement();
-        //_animator.SetFloat(_animationMovement, _speed);
     }
 
     private void AnimationMovement()
@@ -370,5 +350,33 @@ public class Player : NetworkBehaviour
         }
 
         _animator.SetBool(_animationWalk, moveAnimationControl);
+    }
+
+    [Command]
+    private void CommandInitializePlayerData(float health, float damage, float moveSpeed, int maxBullet)
+    {
+        SyncHealth = health;
+        SyncMaxBullet = maxBullet;
+        SyncDamage = damage;
+        SyncMovespeed = moveSpeed;
+    }
+
+    [Command]
+    private void CommandReloadAnimation()
+    {
+        ClientRPCReloadAnimation();
+    }
+
+    [Command]
+    private void CommandSetSprintSpeed(float speedValue)
+    {
+        _currentMoveSpeed += speedValue;
+    }
+
+
+    [ClientRpc]
+    private void ClientRPCReloadAnimation()
+    {
+        _animator.SetTrigger(_animationReload);
     }
 }

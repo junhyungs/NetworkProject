@@ -21,6 +21,17 @@ public class GamePlayer : Player, ITakeDamaged
         }
     }
 
+    public override void OnStopServer()
+    {
+        NetworkUIManager.Instance.UnregisterParty(netId);
+    }
+
+    [Command]
+    private void CommandMakePartyUI(string name)
+    {
+        NetworkUIManager.Instance.RegisterParty(netId, name);
+    }
+
     [Command]
     private void CommandRegisterLocalPlayer(NetworkIdentity identity)
     {
@@ -42,6 +53,8 @@ public class GamePlayer : Player, ITakeDamaged
         myPlayer.Player = this;
 
         UIManager.Instance.TriggerUIEvent(UIEvent.NickName, myPlayer.SyncNickName);
+
+        CommandMakePartyUI(myPlayer.SyncNickName);
     }
 
     private void OnTriggerEnter(Collider other)
@@ -100,24 +113,13 @@ public class GamePlayer : Player, ITakeDamaged
         }
     }
 
-   
     [Command]
     private void Command_SetDeathPlayer()
     {
         gameObject.layer = LayerMask.NameToLayer("DeathPlayer");
 
-        TargetRpc_SetDeathLayer(true);
-
         NetworkIdentity identity = GetComponent<NetworkIdentity>();
-
         GameManager.Instance.SetDeathPlayer(identity);
-    }
-
-    [TargetRpc]
-    public void TargetRpc_SetDeathLayer(bool isDeath)
-    {
-        gameObject.layer = isDeath ? LayerMask.NameToLayer("DeathPlayer") :
-            LayerMask.NameToLayer("Player");
     }
 
     [ClientRpc]

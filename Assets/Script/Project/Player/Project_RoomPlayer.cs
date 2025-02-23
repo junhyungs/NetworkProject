@@ -64,7 +64,7 @@ public class Project_RoomPlayer : NetworkRoomPlayer
     private void SetLobbyPlayer(GameObject player)
     {
         LobbyPlayer lobbyplayerComponent = player.GetComponent<LobbyPlayer>();
-
+        
         lobbyplayerComponent.SetMyPlayer();   
     }
 

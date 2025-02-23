@@ -21,10 +21,8 @@ public class SpawnSystem : NetworkBehaviour
 
     private IEnumerator InitializeSpawnSystem()
     {
-        var objectPool = ObjectPool.Instance;
-
         StartCoroutine(SpawnItems());
-        StartCoroutine(CreateEnemyObject(objectPool));
+        StartCoroutine(CreateEnemyObject());
 
         yield return new WaitUntil(() =>
         {
@@ -136,7 +134,6 @@ public class SpawnSystem : NetworkBehaviour
     [SerializeField] private GameObject[] _enemyObjectArray;
     [SerializeField] private Transform[] _enemySpawnTransformArray;
     [SerializeField] private int _spawnCount;
-    [SerializeField] private float _nextWaveCoolTime;
     [SerializeField] private int _countDown;
 
     [Header("LevelUpData")]
@@ -172,15 +169,17 @@ public class SpawnSystem : NetworkBehaviour
         return enemyPrefabs;
     }
 
-    private IEnumerator CreateEnemyObject(ObjectPool pool)
+    private IEnumerator CreateEnemyObject()
     {
+        var objectPool = ObjectPool.Instance;
+
         var enemyPrefabs = SpawnEnemyPrefabs();
 
         for (int i = 0; i < enemyPrefabs.Length; i++)
         {
             yield return new WaitUntil(() =>
             {
-                return pool.CreatePool(enemyPrefabs[i]);
+                return objectPool.CreatePool(enemyPrefabs[i]);
             });
         }
 

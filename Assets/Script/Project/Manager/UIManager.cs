@@ -16,6 +16,26 @@ public class UIManager : Singleton<UIManager>
         Destroy(gameObject);
     }
 
+    #region PartyUIController
+    [Header("PartyUIController")]
+    [SerializeField] private PartyUIController _partyUIController;
+
+    public void MakePartyUI(PartyPlayer partyPlayerData)
+    {
+        _partyUIController.MakePartyUI(partyPlayerData);
+    }
+
+    public void UpdatePartyUI(uint netId, float health)
+    {
+        _partyUIController.UpdatePartyUI(netId, health);
+    }
+
+    public void DeletePartyUI(uint netId)
+    {
+        _partyUIController.DeletePartyUI(netId);
+    }
+    #endregion
+
     #region GameReadyUI
     [Header("GameReadyUI")]
     [SerializeField] private GameReadyUI _gameReadyUI;
